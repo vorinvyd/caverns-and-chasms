@@ -237,7 +237,7 @@ public class CCEvents {
 				event.setCanceled(true);
 				event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide()));
 
-			} else if (item instanceof WeatheringCopperItem && WeatheringCopperItem.getPrevious(stack).isPresent()) {
+			} else if (WeatheringCopperItem.getPrevious(stack).isPresent()) {
 				WeatheringCopperItem.copyStackToNewItem(stack, WeatheringCopperItem.getPrevious(stack).get());
 				level.playSound(player, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
 				level.levelEvent(player, 3005, pos, 0);
@@ -350,18 +350,11 @@ public class CCEvents {
 		LivingEntity entity = event.getEntity();
 		Level level = entity.getCommandSenderWorld();
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			if (slot != EquipmentSlot.MAINHAND) {
-				ItemStack stack = entity.getItemBySlot(slot);
-				if (stack.getItem() instanceof WeatheringCopperItem item) {
-					item.updateOxidation(stack, level);
-				}
-			}
-		}
-
-		if (entity instanceof Player player) {
-			for (int i = 0; i < 9; i++) {
-				ItemStack stack = player.getSlot(i).get();
-				if (stack.getItem() instanceof WeatheringCopperItem item) {
+			ItemStack stack = entity.getItemBySlot(slot);
+			if (stack.getItem() instanceof WeatheringCopperItem item) {
+				boolean armor = slot.isArmor() && item instanceof ArmorItem;
+				boolean tool = !slot.isArmor() && item instanceof TieredItem;
+				if (armor || tool) {
 					item.updateOxidation(stack, level);
 				}
 			}
@@ -382,8 +375,10 @@ public class CCEvents {
 			for (int z = 0; z < k; z++) {
 				EquipmentSlot slot = EquipmentSlot.values()[random.nextInt(EquipmentSlot.values().length)];
 				ItemStack stack = entity.getItemBySlot(slot);
-				Optional<ItemStack> previous = WeatheringCopperItem.getPrevious(stack);
-				previous.ifPresent(itemStack -> WeatheringCopperItem.copyStackToNewItem(stack, itemStack));
+				if (stack.getItem() instanceof WeatheringCopperItem) {
+					Optional<ItemStack> previous = WeatheringCopperItem.getPrevious(stack);
+					previous.ifPresent(itemStack -> WeatheringCopperItem.copyStackToNewItem(stack, itemStack));
+				}
 			}
 		}
 	}
