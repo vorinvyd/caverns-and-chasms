@@ -118,6 +118,19 @@ public class HoldButtonBlock extends BaseEntityBlock {
 	}
 
 	@Override
+	public boolean hasAnalogOutputSignal(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+		if (level.getBlockEntity(pos) instanceof HoldButtonBlockEntity blockEntity) {
+			return Math.min(blockEntity.getTimePressed(), 15);
+		}
+		return 0;
+	}
+
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		return canAttach(level, pos, getConnectedDirection(state).getOpposite());
 	}

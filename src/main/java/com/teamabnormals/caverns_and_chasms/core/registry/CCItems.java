@@ -149,7 +149,7 @@ public class CCItems {
 	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_PICKAXE = HELPER.createItem("waxed_oxidized_copper_pickaxe", () -> new PickaxeItem(CCItemTiers.COPPER, 1, -2.8F, new Item.Properties()));
 	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_AXE = HELPER.createItem("waxed_oxidized_copper_axe", () -> new AxeItem(CCItemTiers.COPPER, 7.0F, -3.2F, new Item.Properties()));
 	public static final RegistryObject<Item> WAXED_OXIDIZED_COPPER_HOE = HELPER.createItem("waxed_oxidized_copper_hoe", () -> new HoeItem(CCItemTiers.COPPER, -1, -2.0F, new Item.Properties()));
-	
+
 	public static final RegistryObject<Item> NETHERITE_NUGGET = HELPER.createItem("netherite_nugget", () -> new Item(new Item.Properties().fireResistant()));
 	public static final RegistryObject<Item> NETHERITE_HORSE_ARMOR = HELPER.createItem("netherite_horse_armor", () -> new NetheriteHorseArmorItem(12, "netherite", new Item.Properties().fireResistant().stacksTo(1)));
 
@@ -284,6 +284,7 @@ public class CCItems {
 				.addItemsBefore(of(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE), CORE_ARMOR_TRIM_SMITHING_TEMPLATE, FORGER_ARMOR_TRIM_SMITHING_TEMPLATE, IMMOLATE_ARMOR_TRIM_SMITHING_TEMPLATE, PLATE_ARMOR_TRIM_SMITHING_TEMPLATE, RIM_ARMOR_TRIM_SMITHING_TEMPLATE)
 				.addItemsAfter(of(Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE), EXILE_ARMOR_TRIM_SMITHING_TEMPLATE)
 				.addItemsAlphabetically(stack -> stack.is(ItemTags.DECORATED_POT_SHERDS), "pottery_sherd|_", BOOM_POTTERY_SHERD, CAST_POTTERY_SHERD, RIDE_POTTERY_SHERD, STALKER_POTTERY_SHERD)
+				.addItems(EXPOSED_COPPER_INGOT, WEATHERED_COPPER_INGOT, OXIDIZED_COPPER_INGOT, WAXED_COPPER_INGOT, WAXED_EXPOSED_COPPER_INGOT, WAXED_WEATHERED_COPPER_INGOT, WAXED_OXIDIZED_COPPER_INGOT)
 				.tab(TOOLS_AND_UTILITIES)
 				.addItemsAfter(of(Items.STONE_HOE), COPPER_SHOVEL, COPPER_PICKAXE, COPPER_AXE, COPPER_HOE)
 				.addItemsAfter(of(Items.GOLDEN_HOE), SILVER_SHOVEL, SILVER_PICKAXE, SILVER_AXE, SILVER_HOE)

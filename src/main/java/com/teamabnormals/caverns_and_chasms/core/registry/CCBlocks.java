@@ -2,6 +2,7 @@ package com.teamabnormals.caverns_and_chasms.core.registry;
 
 import com.mojang.datafixers.util.Pair;
 import com.teamabnormals.blueprint.common.block.BlueprintBeehiveBlock;
+import com.teamabnormals.blueprint.common.block.BlueprintDirectionalBlock;
 import com.teamabnormals.blueprint.common.block.LogBlock;
 import com.teamabnormals.blueprint.common.block.chest.BlueprintChestBlock;
 import com.teamabnormals.blueprint.common.block.chest.BlueprintTrappedChestBlock;
@@ -14,6 +15,9 @@ import com.teamabnormals.blueprint.core.util.PropertyUtil;
 import com.teamabnormals.blueprint.core.util.PropertyUtil.WoodSetProperties;
 import com.teamabnormals.blueprint.core.util.item.CreativeModeTabContentsPopulator;
 import com.teamabnormals.blueprint.core.util.registry.BlockSubRegistryHelper;
+import com.teamabnormals.caverns_and_chasms.client.renderer.entity.DeeperRenderer;
+import com.teamabnormals.caverns_and_chasms.client.renderer.entity.MimeRenderer;
+import com.teamabnormals.caverns_and_chasms.client.renderer.entity.PeeperRenderer;
 import com.teamabnormals.caverns_and_chasms.common.block.*;
 import com.teamabnormals.caverns_and_chasms.common.block.amethyst.AmethystSlabBlock;
 import com.teamabnormals.caverns_and_chasms.common.block.amethyst.AmethystStairBlock;
@@ -30,6 +34,7 @@ import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.other.CCConstants;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCSoundEvents.CCSoundTypes;
 import com.teamabnormals.caverns_and_chasms.core.registry.helper.CCBlockSubRegistryHelper;
+import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -341,10 +346,20 @@ public class CCBlocks {
 	public static final RegistryObject<Block> CALCITE_STAIRS = HELPER.createBlock("calcite_stairs", () -> new StairBlock(() -> Blocks.CALCITE.defaultBlockState(), CCProperties.CALCITE));
 	public static final RegistryObject<Block> CALCITE_SLAB = HELPER.createBlock("calcite_slab", () -> new SlabBlock(CCProperties.CALCITE));
 	public static final RegistryObject<Block> CALCITE_WALL = HELPER.createBlock("calcite_wall", () -> new WallBlock(CCProperties.CALCITE));
-	public static final RegistryObject<Block> POLISHED_CALCITE = HELPER.createBlock("polished_calcite", () -> new Block(CCProperties.CALCITE));
-	public static final RegistryObject<Block> POLISHED_CALCITE_STAIRS = HELPER.createBlock("polished_calcite_stairs", () -> new StairBlock(() -> POLISHED_CALCITE.get().defaultBlockState(), CCProperties.CALCITE));
-	public static final RegistryObject<Block> POLISHED_CALCITE_SLAB = HELPER.createBlock("polished_calcite_slab", () -> new SlabBlock(CCProperties.CALCITE));
-	public static final RegistryObject<Block> POLISHED_CALCITE_WALL = HELPER.createBlock("polished_calcite_wall", () -> new WallBlock(CCProperties.CALCITE));
+	public static final RegistryObject<Block> POLISHED_CALCITE = HELPER.createBlock("polished_calcite", () -> new Block(CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> POLISHED_CALCITE_STAIRS = HELPER.createBlock("polished_calcite_stairs", () -> new StairBlock(() -> POLISHED_CALCITE.get().defaultBlockState(), CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> POLISHED_CALCITE_SLAB = HELPER.createBlock("polished_calcite_slab", () -> new SlabBlock(CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> POLISHED_CALCITE_WALL = HELPER.createBlock("polished_calcite_wall", () -> new WallBlock(CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> CHISELED_CALCITE = HELPER.createBlock("chiseled_calcite", () -> new BlueprintDirectionalBlock(CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> CALCITE_PILLAR = HELPER.createBlock("calcite_pillar", () -> new RotatedPillarBlock(CCProperties.POLISHED_CALCITE));
+	public static final RegistryObject<Block> CALCITE_BRICKS = HELPER.createBlock("calcite_bricks", () -> new Block(CCProperties.CALCITE_BRICKS));
+	public static final RegistryObject<Block> CALCITE_BRICK_STAIRS = HELPER.createBlock("calcite_brick_stairs", () -> new StairBlock(() -> CALCITE_BRICKS.get().defaultBlockState(), CCProperties.CALCITE_BRICKS));
+	public static final RegistryObject<Block> CALCITE_BRICK_SLAB = HELPER.createBlock("calcite_brick_slab", () -> new SlabBlock(CCProperties.CALCITE_BRICKS));
+	public static final RegistryObject<Block> CALCITE_BRICK_WALL = HELPER.createBlock("calcite_brick_wall", () -> new WallBlock(CCProperties.CALCITE_BRICKS));
+	public static final RegistryObject<Block> CHISELED_CALCITE_BRICKS = HELPER.createBlock("chiseled_calcite_bricks", () -> new Block(CCProperties.CALCITE_BRICKS));
+	public static final RegistryObject<Block> SMOOTH_CALCITE = HELPER.createBlock("smooth_calcite", () -> new Block(CCProperties.CALCITE));
+	public static final RegistryObject<Block> SMOOTH_CALCITE_STAIRS = HELPER.createBlock("smooth_calcite_stairs", () -> new StairBlock(() -> SMOOTH_CALCITE.get().defaultBlockState(), CCProperties.CALCITE));
+	public static final RegistryObject<Block> SMOOTH_CALCITE_SLAB = HELPER.createBlock("smooth_calcite_slab", () -> new SlabBlock(CCProperties.CALCITE));
 
 	public static final RegistryObject<Block> TUFF_STAIRS = HELPER.createBlock("tuff_stairs", () -> new StairBlock(() -> Blocks.TUFF.defaultBlockState(), CCProperties.TUFF));
 	public static final RegistryObject<Block> TUFF_SLAB = HELPER.createBlock("tuff_slab", () -> new SlabBlock(CCProperties.TUFF));
@@ -353,7 +368,7 @@ public class CCBlocks {
 	public static final RegistryObject<Block> POLISHED_TUFF_STAIRS = HELPER.createBlock("polished_tuff_stairs", () -> new StairBlock(() -> POLISHED_TUFF.get().defaultBlockState(), CCProperties.POLISHED_TUFF));
 	public static final RegistryObject<Block> POLISHED_TUFF_SLAB = HELPER.createBlock("polished_tuff_slab", () -> new SlabBlock(CCProperties.POLISHED_TUFF));
 	public static final RegistryObject<Block> POLISHED_TUFF_WALL = HELPER.createBlock("polished_tuff_wall", () -> new WallBlock(CCProperties.POLISHED_TUFF));
-	public static final RegistryObject<Block> CHISELED_TUFF = HELPER.createBlock("chiseled_tuff", () -> new Block(CCProperties.TUFF));
+	public static final RegistryObject<Block> CHISELED_TUFF = HELPER.createBlock("chiseled_tuff", () -> new Block(CCProperties.POLISHED_TUFF));
 	public static final RegistryObject<Block> TUFF_BRICKS = HELPER.createBlock("tuff_bricks", () -> new Block(CCProperties.TUFF_BRICKS));
 	public static final RegistryObject<Block> TUFF_BRICK_STAIRS = HELPER.createBlock("tuff_brick_stairs", () -> new StairBlock(() -> TUFF_BRICKS.get().defaultBlockState(), CCProperties.TUFF_BRICKS));
 	public static final RegistryObject<Block> TUFF_BRICK_SLAB = HELPER.createBlock("tuff_brick_slab", () -> new SlabBlock(CCProperties.TUFF_BRICKS));
@@ -613,9 +628,10 @@ public class CCBlocks {
 				.addItemsAfter(of(Blocks.POLISHED_DIORITE_SLAB), POLISHED_DIORITE_WALL)
 				.addItemsAfter(of(Blocks.POLISHED_ANDESITE_SLAB), POLISHED_ANDESITE_WALL)
 				.addItemsBefore(of(Blocks.DEEPSLATE),
-						() -> Blocks.CALCITE, CALCITE_STAIRS, CALCITE_SLAB, CALCITE_WALL, POLISHED_CALCITE, POLISHED_CALCITE_STAIRS, POLISHED_CALCITE_SLAB, POLISHED_CALCITE_WALL,
-						() -> Blocks.TUFF, TUFF_STAIRS, TUFF_SLAB, TUFF_WALL, CHISELED_TUFF, SMOOTH_TUFF, SMOOTH_TUFF_STAIRS, SMOOTH_TUFF_SLAB,
-						POLISHED_TUFF, POLISHED_TUFF_STAIRS, POLISHED_TUFF_SLAB, POLISHED_TUFF_WALL, TUFF_BRICKS, TUFF_BRICK_STAIRS, TUFF_BRICK_SLAB, TUFF_BRICK_WALL, CHISELED_TUFF_BRICKS,
+						() -> Blocks.CALCITE, CALCITE_STAIRS, CALCITE_SLAB, CALCITE_WALL, SMOOTH_CALCITE, SMOOTH_CALCITE_STAIRS, SMOOTH_CALCITE_SLAB,
+						POLISHED_CALCITE, POLISHED_CALCITE_STAIRS, POLISHED_CALCITE_SLAB, POLISHED_CALCITE_WALL, CHISELED_CALCITE, CALCITE_PILLAR, CALCITE_BRICKS, CALCITE_BRICK_STAIRS, CALCITE_BRICK_SLAB, CALCITE_BRICK_WALL, CHISELED_CALCITE_BRICKS,
+						() -> Blocks.TUFF, TUFF_STAIRS, TUFF_SLAB, TUFF_WALL, SMOOTH_TUFF, SMOOTH_TUFF_STAIRS, SMOOTH_TUFF_SLAB,
+						POLISHED_TUFF, POLISHED_TUFF_STAIRS, POLISHED_TUFF_SLAB, POLISHED_TUFF_WALL, CHISELED_TUFF, TUFF_BRICKS, TUFF_BRICK_STAIRS, TUFF_BRICK_SLAB, TUFF_BRICK_WALL, CHISELED_TUFF_BRICKS,
 						() -> Blocks.DRIPSTONE_BLOCK, DRIPSTONE_STAIRS, DRIPSTONE_SLAB, DRIPSTONE_WALL,
 						SMOOTH_DRIPSTONE, SMOOTH_DRIPSTONE_STAIRS, SMOOTH_DRIPSTONE_SLAB,
 						POLISHED_DRIPSTONE, POLISHED_DRIPSTONE_STAIRS, POLISHED_DRIPSTONE_SLAB, POLISHED_DRIPSTONE_WALL,
@@ -767,6 +783,8 @@ public class CCBlocks {
 		public static final BlockBehaviour.Properties FRAGILE_DEEPSLATE = BlockBehaviour.Properties.copy(Blocks.DEEPSLATE);
 		public static final BlockBehaviour.Properties DRIPSTONE = BlockBehaviour.Properties.copy(Blocks.DRIPSTONE_BLOCK);
 		public static final BlockBehaviour.Properties CALCITE = BlockBehaviour.Properties.copy(Blocks.CALCITE);
+		public static final BlockBehaviour.Properties POLISHED_CALCITE = BlockBehaviour.Properties.copy(Blocks.CALCITE);
+		public static final BlockBehaviour.Properties CALCITE_BRICKS = BlockBehaviour.Properties.copy(Blocks.CALCITE);
 		public static final BlockBehaviour.Properties TUFF = BlockBehaviour.Properties.copy(Blocks.TUFF);
 		public static final BlockBehaviour.Properties POLISHED_TUFF = BlockBehaviour.Properties.copy(Blocks.TUFF).sound(CCSoundTypes.POLISHED_TUFF);
 		public static final BlockBehaviour.Properties TUFF_BRICKS = BlockBehaviour.Properties.copy(Blocks.TUFF).sound(CCSoundTypes.TUFF_BRICKS);
@@ -893,6 +911,12 @@ public class CCBlocks {
 	}
 
 	public enum CCSkullTypes implements SkullBlock.Type {
-		MIME, DEEPER, PEEPER
+		MIME, DEEPER, PEEPER;
+
+		public static void registerSkullModels() {
+			SkullBlockRenderer.SKIN_BY_TYPE.put(DEEPER, DeeperRenderer.DEEPER_TEXTURE);
+			SkullBlockRenderer.SKIN_BY_TYPE.put(PEEPER, PeeperRenderer.PEEPER_TEXTURE);
+			SkullBlockRenderer.SKIN_BY_TYPE.put(MIME, MimeRenderer.MIME_TEXTURE);
+		}
 	}
 }

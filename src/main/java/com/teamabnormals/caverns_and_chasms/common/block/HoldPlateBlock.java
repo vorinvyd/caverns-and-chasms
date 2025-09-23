@@ -68,6 +68,19 @@ public class HoldPlateBlock extends BaseEntityBlock {
 	}
 
 	@Override
+	public boolean hasAnalogOutputSignal(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+		if (level.getBlockEntity(pos) instanceof HoldPlateBlockEntity blockEntity) {
+			return Math.min(blockEntity.getTimePressed(), 15);
+		}
+		return 0;
+	}
+
+	@Override
 	public boolean isPossibleToRespawnInThis(BlockState state) {
 		return true;
 	}

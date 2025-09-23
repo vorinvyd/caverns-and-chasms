@@ -107,13 +107,13 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.add(CHARCOAL.get(), this::createCoalDrops);
 
 			this.add(COPPER_INGOT.get(), this::createIngotDrops);
-			this.add(EXPOSED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(WEATHERED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(OXIDIZED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(WAXED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(WAXED_EXPOSED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(WAXED_WEATHERED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
-			this.add(WAXED_OXIDIZED_COPPER_INGOT.get(), block -> createIngotDrops(block, Items.COPPER_INGOT));
+			this.add(EXPOSED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(WEATHERED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(OXIDIZED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(WAXED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(WAXED_EXPOSED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(WAXED_WEATHERED_COPPER_INGOT.get(), this::createIngotDrops);
+			this.add(WAXED_OXIDIZED_COPPER_INGOT.get(), this::createIngotDrops);
 
 			this.add(IRON_INGOT.get(), this::createIngotDrops);
 			this.add(GOLD_INGOT.get(), this::createIngotDrops);
@@ -311,12 +311,14 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.dropSelf(CALCITE_STAIRS.get());
 			this.dropSelf(CALCITE_WALL.get());
 			this.add(CALCITE_SLAB.get(), this::createSlabItemTable);
+			this.dropSelf(CALCITE_PILLAR.get());
 			this.blockFamily(POLISHED_CALCITE_FAMILY);
+			this.blockFamily(CALCITE_BRICKS_FAMILY);
+			this.blockFamily(SMOOTH_CALCITE_FAMILY);
 
 			this.dropSelf(TUFF_STAIRS.get());
 			this.dropSelf(TUFF_WALL.get());
 			this.add(TUFF_SLAB.get(), this::createSlabItemTable);
-			this.dropSelf(CHISELED_TUFF.get());
 			this.blockFamily(POLISHED_TUFF_FAMILY);
 			this.blockFamily(TUFF_BRICKS_FAMILY);
 			this.blockFamily(SMOOTH_TUFF_FAMILY);
@@ -580,13 +582,6 @@ public class CCLootTableProvider extends LootTableProvider {
 							.add(LootItem.lootTableItem(CCItems.RAW_TIN.get())
 									.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
 									.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
-							)
-					)
-					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-							.add(LootItem.lootTableItem(CCBlocks.SADDLED_EGG.get())
-									.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F)))
-									.when(LootItemKilledByPlayerCondition.killedByPlayer())
-									.when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.1F, 0.03F))
 							)
 					)
 			);

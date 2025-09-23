@@ -50,11 +50,12 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(BlueprintItemTags.LARGE_BOATS).add(LARGE_AZALEA_BOAT.get());
 		this.tag(ItemTags.ARROWS).add(LARGE_ARROW.get(), BLUNT_ARROW.get());
 		this.tag(ItemTags.TRIMMABLE_ARMOR).addTag(CCItemTags.COPPER_HELMETS).addTag(CCItemTags.COPPER_CHESTPLATES).addTag(CCItemTags.COPPER_LEGGINGS).addTag(CCItemTags.COPPER_BOOTS).add(
-				SILVER_HELMET.get(), SILVER_CHESTPLATE.get(), SILVER_LEGGINGS.get(), SILVER_BOOTS.get(), 
-				NECROMIUM_HELMET.get(), NECROMIUM_CHESTPLATE.get(), NECROMIUM_LEGGINGS.get(), NECROMIUM_BOOTS.get(), 
+				SILVER_HELMET.get(), SILVER_CHESTPLATE.get(), SILVER_LEGGINGS.get(), SILVER_BOOTS.get(),
+				NECROMIUM_HELMET.get(), NECROMIUM_CHESTPLATE.get(), NECROMIUM_LEGGINGS.get(), NECROMIUM_BOOTS.get(),
 				SANGUINE_HELMET.get(), SANGUINE_CHESTPLATE.get(), SANGUINE_LEGGINGS.get(), SANGUINE_BOOTS.get()
 		);
-		this.tag(ItemTags.TRIM_MATERIALS).add(SILVER_INGOT.get(), TIN_INGOT.get(), NECROMIUM_INGOT.get(), SPINEL.get(), ZIRCONIA.get(), TURQUOISE.get(), LIVING_FLESH.get());
+		this.tag(ItemTags.TRIM_MATERIALS).add(SILVER_INGOT.get(), TIN_INGOT.get(), NECROMIUM_INGOT.get(), SPINEL.get(), ZIRCONIA.get(), TURQUOISE.get(), LIVING_FLESH.get(),
+				EXPOSED_COPPER_INGOT.get(), WEATHERED_COPPER_INGOT.get(), OXIDIZED_COPPER_INGOT.get(), WAXED_COPPER_INGOT.get(), WAXED_EXPOSED_COPPER_INGOT.get(), WAXED_WEATHERED_COPPER_INGOT.get(), WAXED_OXIDIZED_COPPER_INGOT.get());
 		this.tag(ItemTags.TRIM_TEMPLATES).add(EXILE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), FORGER_ARMOR_TRIM_SMITHING_TEMPLATE.get(), IMMOLATE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), RIM_ARMOR_TRIM_SMITHING_TEMPLATE.get(), PLATE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), CORE_ARMOR_TRIM_SMITHING_TEMPLATE.get());
 		this.tag(ItemTags.DECORATED_POT_SHERDS).add(BOOM_POTTERY_SHERD.get(), CAST_POTTERY_SHERD.get(), RIDE_POTTERY_SHERD.get(), STALKER_POTTERY_SHERD.get());
 
@@ -63,7 +64,7 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.copy(CCBlockTags.SPINEL_ORES, CCItemTags.SPINEL_ORES);
 		this.copy(CCBlockTags.TURQUOISE_ORES, CCItemTags.TURQUOISE_ORES);
 		this.copy(CCBlockTags.AZALEA_LOGS, CCItemTags.AZALEA_LOGS);
-		this.tag(CCItemTags.CUPRIC_FIRE_BASE_BLOCKS).addTag(Tags.Items.INGOTS_COPPER).addTag(Tags.Items.RAW_MATERIALS_COPPER);
+		this.tag(CCItemTags.CUPRIC_FIRE_BASE_BLOCKS).addTag(Tags.Items.INGOTS_COPPER).addTag(CCItemTags.INGOTS_EXPOSED_COPPER).addTag(CCItemTags.INGOTS_WEATHERED_COPPER).addTag(CCItemTags.INGOTS_OXIDIZED_COPPER).addTag(Tags.Items.RAW_MATERIALS_COPPER);
 		this.tag(CCItemTags.MAGIC_DAMAGE_ITEMS).add(SILVER_SWORD.get(), SILVER_PICKAXE.get(), SILVER_AXE.get(), SILVER_SHOVEL.get(), SILVER_HOE.get()).addOptional(new ResourceLocation("abnormals_delight", "silver_knife"));
 		this.tag(CCItemTags.EXPERIENCE_BOOST_ITEMS).add(Items.GOLDEN_SWORD, Items.GOLDEN_PICKAXE, Items.GOLDEN_AXE, Items.GOLDEN_SHOVEL, Items.GOLDEN_HOE).addOptional(new ResourceLocation("farmersdelight", "golden_knife"));
 		this.tag(CCItemTags.SLOWNESS_INFLICTING_ITEMS).add(NECROMIUM_SWORD.get(), NECROMIUM_PICKAXE.get(), NECROMIUM_AXE.get(), NECROMIUM_SHOVEL.get(), NECROMIUM_HOE.get()).addOptional(new ResourceLocation("abnormals_delight", "necromium_knife"));
@@ -121,10 +122,14 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(CCItemTags.GEMS_TURQUOISE).add(TURQUOISE.get());
 		this.tag(CCItemTags.GEMS_ZIRCONIA).add(ZIRCONIA.get());
 		this.tag(Tags.Items.GEMS).addTag(CCItemTags.GEMS_SPINEL).addTag(CCItemTags.GEMS_TURQUOISE).addTag(CCItemTags.GEMS_ZIRCONIA);
+		this.tag(Tags.Items.INGOTS_COPPER).add(WAXED_COPPER_INGOT.get());
+		this.tag(CCItemTags.INGOTS_EXPOSED_COPPER).add(EXPOSED_COPPER_INGOT.get(), WAXED_EXPOSED_COPPER_INGOT.get());
+		this.tag(CCItemTags.INGOTS_WEATHERED_COPPER).add(WEATHERED_COPPER_INGOT.get(), WAXED_WEATHERED_COPPER_INGOT.get());
+		this.tag(CCItemTags.INGOTS_OXIDIZED_COPPER).add(OXIDIZED_COPPER_INGOT.get(), WAXED_OXIDIZED_COPPER_INGOT.get());
 		this.tag(CCItemTags.INGOTS_SILVER).add(SILVER_INGOT.get());
 		this.tag(CCItemTags.INGOTS_TIN).add(TIN_INGOT.get());
 		this.tag(CCItemTags.INGOTS_NECROMIUM).add(NECROMIUM_INGOT.get());
-		this.tag(Tags.Items.INGOTS).addTag(CCItemTags.INGOTS_SILVER).addTag(CCItemTags.INGOTS_TIN).addTag(CCItemTags.INGOTS_NECROMIUM);
+		this.tag(Tags.Items.INGOTS).addTag(CCItemTags.INGOTS_EXPOSED_COPPER).addTag(CCItemTags.INGOTS_WEATHERED_COPPER).addTag(CCItemTags.INGOTS_EXPOSED_COPPER).addTag(CCItemTags.INGOTS_SILVER).addTag(CCItemTags.INGOTS_TIN).addTag(CCItemTags.INGOTS_NECROMIUM);
 		this.tag(Tags.Items.RAW_MATERIALS).addTag(CCItemTags.RAW_MATERIALS_SILVER).addTag(CCItemTags.RAW_MATERIALS_TIN);
 		this.tag(CCItemTags.RAW_MATERIALS_SILVER).add(RAW_SILVER.get());
 		this.tag(CCItemTags.RAW_MATERIALS_TIN).add(RAW_TIN.get());
@@ -136,10 +141,6 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(Tags.Items.NUGGETS).addTag(CCItemTags.NUGGETS_SILVER).addTag(CCItemTags.NUGGETS_TIN).addTag(CCItemTags.NUGGETS_COPPER).addTag(CCItemTags.NUGGETS_NETHERITE).addTag(CCItemTags.NUGGETS_NECROMIUM);
 		this.tag(Tags.Items.HEADS).add(DEEPER_HEAD.get(), PEEPER_HEAD.get(), MIME_HEAD.get());
 		this.copy(BlueprintBlockTags.NOTE_BLOCK_TOP_INSTRUMENTS, ItemTags.NOTE_BLOCK_TOP_INSTRUMENTS);
-
-		this.tag(CCItemTags.SMELTS_TO_COPPER_INGOT)
-				.addTag(CCItemTags.COPPER_SWORDS).addTag(CCItemTags.COPPER_PICKAXES).addTag(CCItemTags.COPPER_AXES).addTag(CCItemTags.COPPER_HOES).addTag(CCItemTags.COPPER_SHOVELS)
-				.addTag(CCItemTags.COPPER_HELMETS).addTag(CCItemTags.COPPER_CHESTPLATES).addTag(CCItemTags.COPPER_LEGGINGS).addTag(CCItemTags.COPPER_BOOTS);
 
 		this.tag(CCItemTags.COPPER_SWORDS).add(COPPER_SWORD.get(), EXPOSED_COPPER_SWORD.get(), WEATHERED_COPPER_SWORD.get(), OXIDIZED_COPPER_SWORD.get(), WAXED_COPPER_SWORD.get(), WAXED_EXPOSED_COPPER_SWORD.get(), WAXED_WEATHERED_COPPER_SWORD.get(), WAXED_OXIDIZED_COPPER_SWORD.get());
 		this.tag(CCItemTags.COPPER_PICKAXES).add(COPPER_PICKAXE.get(), EXPOSED_COPPER_PICKAXE.get(), WEATHERED_COPPER_PICKAXE.get(), OXIDIZED_COPPER_PICKAXE.get(), WAXED_COPPER_PICKAXE.get(), WAXED_EXPOSED_COPPER_PICKAXE.get(), WAXED_WEATHERED_COPPER_PICKAXE.get(), WAXED_OXIDIZED_COPPER_PICKAXE.get());
