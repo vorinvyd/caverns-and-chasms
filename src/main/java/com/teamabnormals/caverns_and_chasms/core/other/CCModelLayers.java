@@ -10,6 +10,7 @@ import com.teamabnormals.caverns_and_chasms.core.registry.CCEntityTypes;
 import net.minecraft.client.model.MinecartModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(modid = CavernsAndChasms.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class CCModelLayers {
 	public static final ModelLayerLocation COPPER_GOLEM = register("copper_golem");
+	public static final ModelLayerLocation COPPER_HORSE_ARMOR = register("copper_horse_armor");
 	public static final ModelLayerLocation DEEPER = register("deeper");
 	public static final ModelLayerLocation DEEPER_HEAD = register("deeper_head");
 	public static final ModelLayerLocation DEEPER_ARMOR = register("deeper", "armor");
@@ -38,7 +40,7 @@ public class CCModelLayers {
 	public static final ModelLayerLocation TMT_MINECART = register("tmt_minecart");
 	public static final ModelLayerLocation TOOLBOX = register("toolbox");
 	public static final ModelLayerLocation ROLLER_DOOR = register("roller_door");
-
+	public static final ModelLayerLocation UNICORN_HORN = register("unicorn_horn");
 
 	@SubscribeEvent
 	public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -59,6 +61,8 @@ public class CCModelLayers {
 		event.registerLayerDefinition(ROLLER_DOOR, RollerDoorRenderer::createBodyLayer);
 		event.registerLayerDefinition(TMT_MINECART, MinecartModel::createBodyLayer);
 		event.registerLayerDefinition(LOST_GOAT, LostGoatModel::createBodyLayer);
+		event.registerLayerDefinition(COPPER_HORSE_ARMOR, () -> LayerDefinition.create(CopperHorseArmorModel.createBodyMesh(new CubeDeformation(0.1F)), 64, 64));
+		event.registerLayerDefinition(UNICORN_HORN, () -> LayerDefinition.create(UnicornHornModel.createBodyMesh(new CubeDeformation(0.1F)), 64, 64));
 	}
 
 	@SubscribeEvent

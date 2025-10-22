@@ -3,7 +3,7 @@ package com.teamabnormals.caverns_and_chasms.client.model;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamabnormals.caverns_and_chasms.client.resources.GrazerSpriteUploader;
-import com.teamabnormals.caverns_and_chasms.common.entity.monster.grazer.AbstractGrazer;
+import com.teamabnormals.caverns_and_chasms.common.entity.animal.grazer.AbstractGrazer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -50,7 +50,7 @@ public class GrazerModel extends AgeableListModel<AbstractGrazer> {
 
 		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(12, 84).addBox(-5.0F, -13.0F, -19.0F, 10.0F, 9.0F, 12.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
 		PartDefinition jaw = head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(15, 105).addBox(-5.0F, 0.0F, -9.0F, 10.0F, 3.0F, 9.0F), PartPose.offset(0.0F, -4.0F, -7.0F));
-		jaw.addOrReplaceChild("drool", CubeListBuilder.create().texOffs(33, 116).addBox(5.0F, 3.0F, -9.0F, 0.0F, 9.0F, 1.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+		jaw.addOrReplaceChild("drool", CubeListBuilder.create().texOffs(33, 116).addBox(0.0F, 0.0F, -0.5F, 0.0F, 9.0F, 1.0F), PartPose.offset(5.0F, 3.0F, -8.5F));
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, -25.0F, -19.0F, 10.0F, 12.0F, 24.0F)
 				.texOffs(0, 36).addBox(-5.0F, -25.0F, -19.0F, 10.0F, 24.0F, 24.0F, new CubeDeformation(0.5F))
 				.texOffs(68, 12).addBox(-5.0F, -13.0F, -7.0F, 10.0F, 12.0F, 12.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
@@ -139,6 +139,13 @@ public class GrazerModel extends AgeableListModel<AbstractGrazer> {
 		}
 
 		this.head.xRot = this.body.xRot;
+		this.drool.xRot = -this.head.xRot - this.jaw.xRot;
+	}
+
+	@Override
+	public void prepareMobModel(AbstractGrazer grazer, float limbSwing, float limbSwingTicks, float partialTick) {
+		super.prepareMobModel(grazer, limbSwing, limbSwingTicks, partialTick);
+		this.drool.visible = grazer.shouldShowDroolModel();
 	}
 
 	public void renderOverlay(TextureAtlasSprite sprite, PoseStack matrixStack, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

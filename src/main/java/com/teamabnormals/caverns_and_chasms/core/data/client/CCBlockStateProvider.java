@@ -76,7 +76,7 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.block(SPINEL_ORE);
 		this.block(DEEPSLATE_SPINEL_ORE);
 		this.block(SPINEL_BLOCK);
-		this.cubeColumnBlock(SPINEL_LAMP);
+		this.block(SPINEL_LAMP);
 		this.logBlock(SPINEL_PILLAR);
 		this.blockFamily(SPINEL_BRICKS_FAMILY);
 
@@ -89,20 +89,29 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.block(TURQUOISE_BLOCK);
 		this.logBlock(TURQUOISE_PILLAR);
 		this.blockFamily(TURQUOISE_TILES_FAMILY);
+		this.block(TURQUOISE_LAMP);
 		this.caviarBlock(CAVIAR);
 
 		this.refractorBlock(REFRACTOR);
 		this.resistorBlock(RESISTOR);
 
 		this.block(ZIRCONIA_BLOCK);
+		this.block(ZIRCONIA_LAMP);
+		this.block(ORNATE_GLASS);
+		this.glassPaneBlock(ORNATE_GLASS_PANE, ORNATE_GLASS);
 
-		this.cubeColumnBlock(LAPIS_LAZULI_LAMP);
+		this.block(LAPIS_LAZULI_LAMP);
 		this.logBlock(LAPIS_LAZULI_PILLAR);
 		this.blockFamily(LAPIS_LAZULI_BRICKS_FAMILY);
 
 		this.block(AMETHYST_BLOCK);
 		this.block(CUT_AMETHYST);
 		this.blockFamily(CUT_AMETHYST_BRICKS_FAMILY);
+		this.block(AMETHYST_LAMP);
+		
+		this.block(QUARTZ_LAMP);
+		this.block(DIAMOND_LAMP);
+		this.block(EMERALD_LAMP);
 
 		this.block(NECROMIUM_BLOCK);
 		this.block(ROTTEN_FLESH_BLOCK);
@@ -983,12 +992,15 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 				default -> "_four";
 			};
 
-			boolean isLit = state.getValue(CoalBlock.LIT);
-			String lit = isLit ? "_lit" : "";
-			String name = name(block) + count + lit;
-			BlockModelBuilder model = models().withExistingParent(name, CavernsAndChasms.location("block/template_" + name))
+			int heat = state.getValue(CoalBlock.HEAT);
+			boolean isHot = heat != 0;
+			boolean hasFlame = heat == 2;
+			String lit = isHot ? "_lit" : "";
+			String flame = hasFlame ? "_flame" : "";
+			String name = name(block) + count;
+			BlockModelBuilder model = models().withExistingParent(name + lit + flame, CavernsAndChasms.location("block/template_" + name + (hasFlame ? "_lit" : "")))
 					.texture("coal", blockTexture(block).withSuffix(lit));
-			if (isLit) {
+			if (hasFlame) {
 				model.texture("fire", blockTexture(block).withSuffix("_fire"));
 			}
 			return ConfiguredModel.builder()

@@ -1,8 +1,8 @@
 package com.teamabnormals.caverns_and_chasms.core.other;
 
+import com.teamabnormals.blueprint.common.world.storage.tracking.IDataManager;
 import com.teamabnormals.caverns_and_chasms.core.CCConfig;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
-import com.teamabnormals.caverns_and_chasms.core.registry.CCEnchantments;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCItems;
 import com.teamabnormals.caverns_and_chasms.integration.quark.ToolboxTooltips;
 import net.minecraft.ChatFormatting;
@@ -52,10 +52,10 @@ public class CCClientEvents {
 		model.leftArm.xRot += model.body.yRot;
 		f = 1.0F - ((1.0F - model.attackTime) * f * f);
 		float f1 = Mth.sin(f * (float) Math.PI);
-		float f2 = Mth.sin(model.attackTime * (float) Math.PI) * -(model.head.xRot - 0.7F) * 0.75F;
+		float f2 = Mth.sin(model.attackTime * (float) Math.PI) * -(model.head.xRot - 0.7F);
 		armModel.xRot -= f1 * 1.2F + f2;
 		// armModel.yRot += model.body.yRot * 2.0F;
-		armModel.zRot += Mth.sin(model.attackTime * (float) Math.PI) * -0.4F;
+		// armModel.zRot += Mth.sin(model.attackTime * (float) Math.PI) * -0.4F;
 	}
 
 	@SubscribeEvent
@@ -76,12 +76,8 @@ public class CCClientEvents {
 
 	@SubscribeEvent
 	public static void livingRender(RenderLivingEvent.Pre<?, ?> event) {
-		LivingEntity entity = event.getEntity();
-		if (entity.isCrouching()) {
-			ItemStack headStack = entity.getItemBySlot(EquipmentSlot.HEAD);
-			if (headStack.is(CCItems.COWL.get()) && headStack.getEnchantmentLevel(CCEnchantments.OBSCURITY.get()) > 0) {
-				event.setCanceled(true);
-			}
+		if (event.getEntity() instanceof IDataManager data && data.getValue(CCDataProcessors.OBSCURITY_INVISIBILITY)) {
+			event.setCanceled(true);
 		}
 	}
 

@@ -10,8 +10,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.teamabnormals.caverns_and_chasms.core.other.tags.CCEntityTypeTags.NOT_DEFLECTED_BY_TIN;
-import static com.teamabnormals.caverns_and_chasms.core.other.tags.CCEntityTypeTags.SPAWNS_FROM_CAVE_GROWTHS;
+import static com.teamabnormals.caverns_and_chasms.core.other.tags.CCEntityTypeTags.*;
 import static com.teamabnormals.caverns_and_chasms.core.registry.CCEntityTypes.*;
 
 public class CCEntityTypeTagsProvider extends EntityTypeTagsProvider {
@@ -22,12 +21,12 @@ public class CCEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
 	@Override
 	public void addTags(Provider provider) {
-		// If we add rats and flies back they need to be in the FALL_DAMAGE_IMMUNE tag.
-		this.tag(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(COPPER_GOLEM.get(), GLARE.get());
+		this.tag(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(COPPER_GOLEM.get(), GLARE.get(), RAT.get());
 		this.tag(EntityTypeTags.ARROWS).add(LARGE_ARROW.get(), BLUNT_ARROW.get());
 		this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(KUNAI.get());
 
 		this.tag(SPAWNS_FROM_CAVE_GROWTHS).add(EntityType.BAT, EntityType.SILVERFISH);
 		this.tag(NOT_DEFLECTED_BY_TIN).add(EntityType.WITHER_SKULL);
+		this.tag(SILVER_HURTS_EXTRA_TYPES).add(EntityType.WITHER);
 	}
 }
