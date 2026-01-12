@@ -92,11 +92,12 @@ public class CCBlocks {
 	public static final RegistryObject<Block> CASSITERITE_TIN_ORE = HELPER.createBlock("cassiterite_tin_ore", () -> new Block(CCProperties.CASSITERITE_TIN_ORE));
 	public static final RegistryObject<Block> RAW_TIN_BLOCK = HELPER.createBlock("raw_tin_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_LIGHT_GRAY).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(CCSoundTypes.TIN_ORE)));
 	public static final RegistryObject<Block> TIN_BARS = HELPER.createBlock("tin_bars", () -> new IronBarsBlock(CCProperties.TIN_BARS));
-	public static final RegistryObject<Block> FLOAT_GLASS = HELPER.createBlock("float_glass", () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)));
-	public static final RegistryObject<Block> FLOAT_GLASS_PANE = HELPER.createBlock("float_glass_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)));
+	public static final RegistryObject<Block> FLOAT_GLASS = HELPER.createBlock("float_glass", () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).sound(CCSoundTypes.FLOAT_GLASS)));
+	public static final RegistryObject<Block> FLOAT_GLASS_PANE = HELPER.createBlock("float_glass_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE).sound(CCSoundTypes.FLOAT_GLASS)));
 
 	public static final RegistryObject<Block> HOLD_PLATE = HELPER.createBlock("hold_plate", () -> new HoldPlateBlock(CCProperties.HOLD_PLATE));
 	public static final RegistryObject<Block> HOLD_BUTTON = HELPER.createBlock("hold_button", () -> new HoldButtonBlock(CCProperties.HOLD_BUTTON));
+	public static final RegistryObject<Block> WINCH = HELPER.createWinchBlock("winch", () -> new WinchBlock(CCProperties.WINCH));
 	public static final RegistryObject<Block> WALL_DIMMER = HELPER.createBlockNoItem("wall_dimmer", () -> new WallDimmerBlock(CCProperties.DIMMER));
 	public static final RegistryObject<Block> DIMMER = HELPER.createBlockNoItem("dimmer", () -> new DimmerBlock(CCProperties.DIMMER));
 	public static final RegistryObject<Block> BOUNCER = HELPER.createBlock("bouncer", () -> new BouncerBlock(BlockBehaviour.Properties.copy(TIN_BLOCK.get())));
@@ -293,8 +294,8 @@ public class CCBlocks {
 
 	public static final RegistryObject<Block> ZIRCONIA_BLOCK = HELPER.createBlock("zirconia_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.DIAMOND).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(CCSoundTypes.ZIRCONIA)));
 	public static final RegistryObject<Block> ZIRCONIA_LAMP = HELPER.createBlock("zirconia_lamp", () -> new Block(Properties.copy(LAPIS_LAZULI_LAMP.get()).sound(CCSoundTypes.ZIRCONIA)));
-	public static final RegistryObject<Block> ORNATE_GLASS = HELPER.createBlock("ornate_glass", () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)));
-	public static final RegistryObject<Block> ORNATE_GLASS_PANE = HELPER.createBlock("ornate_glass_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)));
+	public static final RegistryObject<Block> ORNATE_GLASS = HELPER.createBlock("ornate_glass", () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.GLASS).sound(CCSoundTypes.ORNATE_GLASS)));
+	public static final RegistryObject<Block> ORNATE_GLASS_PANE = HELPER.createBlock("ornate_glass_pane", () -> new IronBarsBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE).sound(CCSoundTypes.ORNATE_GLASS)));
 
 	public static final RegistryObject<Block> TURQUOISE_ORE = HELPER.createBlock("turquoise_ore", () -> new TurquoiseOreBlock(CCProperties.ORE, UniformInt.of(4, 9)), CCProperties.FANCY);
 	public static final RegistryObject<Block> DEEPSLATE_TURQUOISE_ORE = HELPER.createBlock("deepslate_turquoise_ore", () -> new TurquoiseOreBlock(CCProperties.DEEPSLATE_ORE, UniformInt.of(4, 9)), CCProperties.FANCY);
@@ -733,7 +734,6 @@ public class CCBlocks {
 						FLOODLIGHT, EXPOSED_FLOODLIGHT, WEATHERED_FLOODLIGHT, OXIDIZED_FLOODLIGHT, WAXED_FLOODLIGHT, WAXED_EXPOSED_FLOODLIGHT, WAXED_WEATHERED_FLOODLIGHT, WAXED_OXIDIZED_FLOODLIGHT,
 						DIMMER, LAVA_LAMP
 				)
-				.addItemsAfter(of(Blocks.LIGHTNING_ROD), HOOP)
 				.addItemsAfter(of(Blocks.SEA_LANTERN), LAPIS_LAZULI_LAMP, SPINEL_LAMP)
 				.addItemsBefore(of(Blocks.SHULKER_BOX), TOOLBOX, EXPOSED_TOOLBOX, WEATHERED_TOOLBOX, OXIDIZED_TOOLBOX, WAXED_TOOLBOX, WAXED_EXPOSED_TOOLBOX, WAXED_WEATHERED_TOOLBOX, WAXED_OXIDIZED_TOOLBOX, STORAGE_DUCT, STORAGE_DUCT_HATCH)
 				.addItemsBefore(of(Blocks.INFESTED_STONE), FRAGILE_STONE, FRAGILE_DEEPSLATE)
@@ -745,7 +745,7 @@ public class CCBlocks {
 				.addItemsAfter(of(Blocks.COMPARATOR), REFRACTOR, RESISTOR)
 				.addItemsAfter(of(Blocks.STONE_BUTTON), WAXED_COPPER_BUTTON, WAXED_EXPOSED_COPPER_BUTTON, WAXED_WEATHERED_COPPER_BUTTON, WAXED_OXIDIZED_COPPER_BUTTON, HOLD_BUTTON)
 				.addItemsAfter(of(Blocks.TARGET), BOUNCER)
-				.addItemsAfter(of(Blocks.LIGHTNING_ROD), DIMMER, HOOP)
+				.addItemsAfter(of(Blocks.LIGHTNING_ROD), DIMMER, HOOP, WINCH)
 				.addItemsAfter(of(Blocks.TNT), TMT)
 				.addItemsAfter(of(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE), MEDIUM_WEIGHTED_PRESSURE_PLATE)
 				.addItemsAfter(of(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE), HOLD_PLATE)
@@ -801,7 +801,7 @@ public class CCBlocks {
 		public static final BlockBehaviour.Properties POLISHED_TUFF = BlockBehaviour.Properties.copy(Blocks.TUFF).sound(CCSoundTypes.POLISHED_TUFF);
 		public static final BlockBehaviour.Properties TUFF_BRICKS = BlockBehaviour.Properties.copy(Blocks.TUFF).sound(CCSoundTypes.TUFF_BRICKS);
 		public static final BlockBehaviour.Properties SUGILITE = BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).instrument(NoteBlockInstrument.BASEDRUM).sound(CCSoundTypes.SUGILITE).requiresCorrectToolForDrops().strength(1.5F, 6.0F);
-		public static final BlockBehaviour.Properties CASSITERITE = BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(4.0F, 4.0F);
+		public static final BlockBehaviour.Properties CASSITERITE = BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(4.0F, 4.0F).sound(CCSoundTypes.CASSITERITE);
 		public static final BlockBehaviour.Properties COBBLESTONE_BRICKS = BlockBehaviour.Properties.copy(Blocks.COBBLESTONE);
 		public static final BlockBehaviour.Properties COBBLED_DEEPSLATE_BRICKS = BlockBehaviour.Properties.copy(Blocks.COBBLED_DEEPSLATE);
 		public static final BlockBehaviour.Properties DRIPSTONE_SHINGLES = BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN).instrument(NoteBlockInstrument.BASEDRUM).sound(SoundType.DRIPSTONE_BLOCK).requiresCorrectToolForDrops().strength(1.5F, 1.0F);
@@ -859,6 +859,7 @@ public class CCBlocks {
 
 		public static final BlockBehaviour.Properties HOLD_PLATE = BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).requiresCorrectToolForDrops().noCollission().strength(0.5F).sound(CCSoundTypes.TIN).pushReaction(PushReaction.DESTROY);
 		public static final BlockBehaviour.Properties HOLD_BUTTON = BlockBehaviour.Properties.of().noCollission().strength(0.5F).sound(CCSoundTypes.TIN).pushReaction(PushReaction.DESTROY);
+		public static final BlockBehaviour.Properties WINCH = BlockBehaviour.Properties.of().strength(0.5F).sound(CCSoundTypes.TIN).pushReaction(PushReaction.DESTROY);
 		public static final BlockBehaviour.Properties DIMMER = BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).forceSolidOn().requiresCorrectToolForDrops().strength(3.5F).noOcclusion().sound(CCSoundTypes.TIN).pushReaction(PushReaction.DESTROY).lightLevel((state) -> state.getValue(AbstractDimmerBlock.POWER));
 		public static final BlockBehaviour.Properties HOOP = BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5F).sound(CCSoundTypes.TIN);
 		public static final BlockBehaviour.Properties STORAGE_DUCT = BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).requiresCorrectToolForDrops().strength(5.0F).sound(CCSoundTypes.STORAGE_DUCT);

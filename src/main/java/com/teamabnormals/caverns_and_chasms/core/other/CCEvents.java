@@ -7,9 +7,6 @@ import com.teamabnormals.caverns_and_chasms.common.block.BrazierBlock;
 import com.teamabnormals.caverns_and_chasms.common.block.CoalBlock;
 import com.teamabnormals.caverns_and_chasms.common.block.FlintBlock;
 import com.teamabnormals.caverns_and_chasms.common.block.weathering.CCWeatheringCopper;
-import com.teamabnormals.caverns_and_chasms.core.interfaces.ControllableGolem;
-import com.teamabnormals.caverns_and_chasms.core.interfaces.RatHolder;
-import com.teamabnormals.caverns_and_chasms.core.interfaces.RatHolder.AttachedRat;
 import com.teamabnormals.caverns_and_chasms.common.entity.ai.goal.FollowTuningForkGoal;
 import com.teamabnormals.caverns_and_chasms.common.entity.animal.Fly;
 import com.teamabnormals.caverns_and_chasms.common.entity.animal.Rat;
@@ -25,8 +22,11 @@ import com.teamabnormals.caverns_and_chasms.common.item.copper.TuningForkItem;
 import com.teamabnormals.caverns_and_chasms.common.item.copper.WeatheringCopperItem;
 import com.teamabnormals.caverns_and_chasms.common.item.silver.FoilItem;
 import com.teamabnormals.caverns_and_chasms.common.item.silver.SilverItem;
+import com.teamabnormals.caverns_and_chasms.common.network.S2CUpdateAttachedRatsMessage;
 import com.teamabnormals.caverns_and_chasms.core.CCConfig;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
+import com.teamabnormals.caverns_and_chasms.core.interfaces.ControllableGolem;
+import com.teamabnormals.caverns_and_chasms.core.interfaces.RatHolder;
 import com.teamabnormals.caverns_and_chasms.core.mixin.LivingEntityAccessor;
 import com.teamabnormals.caverns_and_chasms.core.other.tags.CCBlockTags;
 import com.teamabnormals.caverns_and_chasms.core.other.tags.CCDamageTypeTags;
@@ -42,6 +42,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -91,16 +92,19 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
+import net.minecraftforge.event.entity.player.PlayerEvent.StartTracking;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Collection;
@@ -115,11 +119,6 @@ public class CCEvents {
 	@SubscribeEvent
 	public static void onLivingSpawned(EntityJoinLevelEvent event) {
 		Entity entity = event.getEntity();
-
-		if (entity instanceof RatHolder ratholder) {
-			for (AttachedRat attachedrat : ratholder.getAttachedRats())
-				attachedrat.initialize((LivingEntity) ratholder);
-		}
 
 		if (entity instanceof Zombie zombie) {
 			zombie.goalSelector.addGoal(1, new AvoidEntityGoal<>(zombie, Fly.class, 9.0F, 1.05D, 1.05D));
@@ -370,6 +369,20 @@ public class CCEvents {
 	}
 
 	@SubscribeEvent
+	public static void onEntityTracked(StartTracking event) {
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		Entity trackingentity = event.getTarget();
+		if (trackingentity instanceof Rat rat) {
+			LivingEntity attachedEntity = rat.getAttachedEntity();
+			if (attachedEntity != null) {
+				CavernsAndChasms.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CUpdateAttachedRatsMessage((RatHolder) attachedEntity));
+			}
+		} else if (trackingentity instanceof RatHolder ratholder) {
+			CavernsAndChasms.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CUpdateAttachedRatsMessage(ratholder));
+		}
+	}
+
+	@SubscribeEvent
 	public static void onLightningStrike(EntityStruckByLightningEvent event) {
 		if (event.getEntity() instanceof LivingEntity entity && !entity.level().isClientSide()) {
 			ItemStack helmet = entity.getItemBySlot(EquipmentSlot.HEAD);
@@ -603,12 +616,28 @@ public class CCEvents {
 	}
 
 	@SubscribeEvent
+	public static void onShieldBlock(ShieldBlockEvent event) {
+		LivingEntity entity = event.getEntity();
+		DamageSource source = event.getDamageSource();
+		if (source.getDirectEntity() instanceof Rat rat && rat.getAttachedEntity() == entity)
+			event.setCanceled(true);
+	}
+
+	@SubscribeEvent
 	public static void onLivingDeath(LivingDeathEvent event) {
 		LivingEntity entity = event.getEntity();
 		Level level = entity.level();
 
 		if (!level.isClientSide)
 			((RatHolder) entity).detachAllRats();
+	}
+
+	@SubscribeEvent
+	public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
+		LivingEntity entity = event.getEntity();
+		LivingEntity newtarget = event.getNewTarget();
+		if (newtarget instanceof Rat rat && rat.getAttachedEntity() == entity)
+			event.setCanceled(true);
 	}
 
 	@SubscribeEvent
@@ -707,10 +736,10 @@ public class CCEvents {
 					projectile.checkInsideBlocks();
 
 					SoundType soundtype = state.getBlock().getSoundType(state, level, pos, null);
-					SoundEvent soundevent = soundtype == CCSoundTypes.STORAGE_DUCT ? CCSoundEvents.STORAGE_DUCT_DEFLECT.get() : soundtype == CCSoundTypes.TIN_ORE ? CCSoundEvents.TIN_ORE_DEFLECT.get() : soundtype == CCSoundTypes.DEEPSLATE_TIN_ORE ? CCSoundEvents.DEEPSLATE_TIN_ORE_DEFLECT.get() : CCSoundEvents.TIN_DEFLECT.get();
+					SoundEvent soundevent = soundtype == CCSoundTypes.STORAGE_DUCT ? CCSoundEvents.STORAGE_DUCT_DEFLECT.get() : soundtype == CCSoundTypes.TIN_ORE ? CCSoundEvents.TIN_ORE_DEFLECT.get() : soundtype == CCSoundTypes.DEEPSLATE_TIN_ORE ? CCSoundEvents.DEEPSLATE_TIN_ORE_DEFLECT.get() : soundtype == CCSoundTypes.CASSITERITE ? CCSoundEvents.CASSITERITE_DEFLECT.get() : CCSoundEvents.TIN_DEFLECT.get();
 					float pitchmultiplier = soundtype == CCSoundTypes.STORAGE_DUCT ? 0.5F : 1.0F;
 
-					playTinDeflectEffects(level, location, movement.reverse().normalize(), speed, soundevent, pitchmultiplier, random);
+					playRicochetEffects(level, location, movement.reverse().normalize(), speed, soundevent, pitchmultiplier, random);
 
 					for (int l = 0; l < 3; ++l) {
 						Vec3 vec3 = movement.reverse().normalize();
@@ -743,7 +772,7 @@ public class CCEvents {
 					projectile.setDeltaMovement(Vec3.ZERO);
 					projectile.checkInsideBlocks();
 
-					CCEvents.playTinDeflectEffects(level, location, reflect.reverse().normalize(), movement.lengthSqr(), random);
+					CCEvents.playRicochetEffects(level, location, reflect.reverse().normalize(), movement.lengthSqr(), random);
 				}
 
 				grazer.addDeflectedProjectile(projectile);
@@ -824,9 +853,6 @@ public class CCEvents {
 			}
 		}
 
-		if (entity instanceof RatHolder ratholder)
-			ratholder.tickRats();
-
 		ItemStack headstack = entity.getItemBySlot(EquipmentSlot.HEAD);
 		if (!level.isClientSide() && headstack.getItem() == CCItems.TETHER_POTION.get()) {
 			TetherPotionItem.updateTetherPotionEffects(entity, headstack, true);
@@ -884,8 +910,20 @@ public class CCEvents {
 			player.level().playLocalSound(player.getX(), player.getY(), player.getZ(), CCSoundEvents.ZIRCONIA_ANVIL_USE.get(), SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F, false);
 	}
 
-	public static void playTinDeflectEffects(Level level, Vec3 location, Vec3 normal, double speed, SoundEvent soundEvent, float pitchMultiplier, RandomSource random) {
-		playTinDeflectSound(level, location, speed, soundEvent, pitchMultiplier);
+	@SubscribeEvent
+	public static void onLivingJump(LivingJumpEvent event) {
+		LivingEntity entity = event.getEntity();
+		Level level = entity.level();
+
+		if (!level.isClientSide && entity instanceof Player) {
+			for (Rat rat : ((RatHolder) entity).getAttachedRats()) {
+				rat.loosenGrip(15F);
+			}
+		}
+	}
+
+	public static void playRicochetEffects(Level level, Vec3 location, Vec3 normal, double speed, SoundEvent soundEvent, float pitchMultiplier, RandomSource random) {
+		playRicochetSound(level, location, speed, soundEvent, pitchMultiplier);
 
 		for (int i = 0; i < 3; ++i) {
 			;
@@ -896,16 +934,16 @@ public class CCEvents {
 		}
 	}
 
-	public static void playTinDeflectEffects(Level level, Vec3 location, Vec3 normal, double speed, RandomSource random) {
-		playTinDeflectEffects(level, location, normal, speed, CCSoundEvents.TIN_DEFLECT.get(), 1.0F, random);
+	public static void playRicochetEffects(Level level, Vec3 location, Vec3 normal, double speed, RandomSource random) {
+		playRicochetEffects(level, location, normal, speed, CCSoundEvents.TIN_DEFLECT.get(), 1.0F, random);
 	}
 
-	public static void playTinDeflectSound(Level level, Vec3 location, double speed, SoundEvent soundEvent, float pitchMultiplier) {
+	public static void playRicochetSound(Level level, Vec3 location, double speed, SoundEvent soundEvent, float pitchMultiplier) {
 		level.playSound(null, location.x, location.y, location.z, soundEvent, SoundSource.BLOCKS, Math.min((float) speed * 0.7F + 0.2F, 1.0F), Math.min(0.5F + (float) speed * 0.8F * pitchMultiplier, 1.8F));
 	}
 
-	public static void playTinDeflectSound(Level level, Vec3 location, double speed) {
-		playTinDeflectSound(level, location, speed, CCSoundEvents.TIN_DEFLECT.get(), 1.0F);
+	public static void playRicochetSound(Level level, Vec3 location, double speed) {
+		playRicochetSound(level, location, speed, CCSoundEvents.TIN_DEFLECT.get(), 1.0F);
 	}
 
 	private static void rewindTeleport(LivingEntity entity) {

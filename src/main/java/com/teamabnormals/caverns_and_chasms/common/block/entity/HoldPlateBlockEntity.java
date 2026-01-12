@@ -23,14 +23,13 @@ public class HoldPlateBlockEntity extends BlockEntity {
 
 	public static void tick(Level level, BlockPos pos, BlockState state, HoldPlateBlockEntity blockEntity) {
 		if (!level.isClientSide) {
-			if (level.getGameTime() % 20 == 0) {
-				if (state.getValue(HoldPlateBlock.PRESSED)) {
-					blockEntity.timePressed++;
-					level.blockUpdated(pos, state.getBlock());
-				} else if (blockEntity.timePressed != 0) {
-					blockEntity.timePressed = 0;
-					level.blockUpdated(pos, state.getBlock());
-				}
+			// TODO: Should probably update the block below too like in HoldPlateBlock.updateNeighbors
+			if (state.getValue(HoldPlateBlock.PRESSED)) {
+				blockEntity.timePressed++;
+				level.blockUpdated(pos, state.getBlock());
+			} else if (blockEntity.timePressed != 0) {
+				blockEntity.timePressed = 0;
+				level.blockUpdated(pos, state.getBlock());
 			}
 
 			if (state.getValue(HoldPlateBlock.PRESSED) && HoldPlateBlock.getEntityCount(level, pos) == 0) {
