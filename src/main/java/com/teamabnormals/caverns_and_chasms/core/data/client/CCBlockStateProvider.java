@@ -15,10 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.properties.AttachFace;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
@@ -109,7 +106,7 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.block(CUT_AMETHYST);
 		this.blockFamily(CUT_AMETHYST_BRICKS_FAMILY);
 		this.block(AMETHYST_LAMP);
-		
+
 		this.block(QUARTZ_LAMP);
 		this.block(DIAMOND_LAMP);
 		this.block(EMERALD_LAMP);
@@ -120,7 +117,7 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.flintBlock(FLINT_BLOCK);
 		this.coalBlock(COAL);
 		this.coalBlock(CHARCOAL);
-		this.charcoalBlock(CHARCOAL_BLOCK);
+		this.logBlock(CHARCOAL_BLOCK);
 
 		this.ingotBlock(COPPER_INGOT);
 		this.ingotBlock(EXPOSED_COPPER_INGOT);
@@ -326,6 +323,19 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.caveGrowthsBlock(ZESTY_CAVE_GROWTHS, POTTED_ZESTY_CAVE_GROWTHS);
 
 		this.saddledEggBlock(SADDLED_EGG);
+
+		this.vanillaSlabBlock(Blocks.SANDSTONE, Blocks.SANDSTONE_SLAB, "_top", "_bottom");
+		this.vanillaSlabBlock(Blocks.CUT_SANDSTONE, Blocks.CUT_SANDSTONE_SLAB, "sandstone_top");
+		this.vanillaSlabBlock(Blocks.RED_SANDSTONE, Blocks.RED_SANDSTONE_SLAB, "_top", "_bottom");
+		this.vanillaSlabBlock(Blocks.CUT_RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE_SLAB, "red_sandstone_top");
+		this.vanillaSlabBlock(Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_SLAB, "quartz_block_top");
+
+		this.vanillaSlabBlock(Blocks.POLISHED_ANDESITE, Blocks.POLISHED_ANDESITE_SLAB);
+		this.vanillaSlabBlock(Blocks.POLISHED_BLACKSTONE, Blocks.POLISHED_BLACKSTONE_SLAB);
+		this.vanillaSlabBlock(Blocks.POLISHED_DEEPSLATE, Blocks.POLISHED_DEEPSLATE_SLAB);
+		this.vanillaSlabBlock(Blocks.POLISHED_DIORITE, Blocks.POLISHED_DIORITE_SLAB);
+		this.vanillaSlabBlock(Blocks.POLISHED_GRANITE, Blocks.POLISHED_GRANITE_SLAB);
+		this.vanillaSlabBlock(Blocks.PRISMARINE_BRICKS, Blocks.PRISMARINE_BRICK_SLAB);
 	}
 
 	public void caveGrowthsBlock(RegistryObject<Block> caveGrowths, RegistryObject<Block> flowerPot) {
@@ -960,31 +970,40 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		}
 	}
 
+	public void vanillaSlabBlock(Block block, Block slab) {
+		if (slab instanceof SlabBlock slabBlock) {
+			ResourceLocation name = ForgeRegistries.BLOCKS.getKey(slab);
+			ResourceLocation side = new ResourceLocation(CavernsAndChasms.MOD_ID, ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+			ResourceLocation full = blockTexture(block);
+			this.slabBlock(slabBlock, models().slab(name.toString(), side, full, full), models().slabTop(name + "_top", side, full, full), models().cubeColumn(name(slab) + "_double", side, full));
+		}
+	}
+
+	public void vanillaSlabBlock(Block block, Block slab, String topSuffix, String bottomSuffix) {
+		if (slab instanceof SlabBlock slabBlock) {
+			ResourceLocation name = ForgeRegistries.BLOCKS.getKey(slab);
+			ResourceLocation side = new ResourceLocation(CavernsAndChasms.MOD_ID, ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+			ResourceLocation top = blockTexture(block).withSuffix(topSuffix);
+			ResourceLocation bottom = blockTexture(block).withSuffix(bottomSuffix);
+			this.slabBlock(slabBlock, models().slab(name.toString(), side, bottom, top), models().slabTop(name + "_top", side, bottom, top), models().cubeBottomTop(name(slab) + "_double", side, bottom, top));
+		}
+	}
+
+	public void vanillaSlabBlock(Block block, Block slab, String topTexture) {
+		if (slab instanceof SlabBlock slabBlock) {
+			ResourceLocation name = ForgeRegistries.BLOCKS.getKey(slab);
+			ResourceLocation side = new ResourceLocation(CavernsAndChasms.MOD_ID, ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+			ResourceLocation top = new ResourceLocation(ModelProvider.BLOCK_FOLDER + "/" + topTexture);
+			this.slabBlock(slabBlock, models().slab(name.toString(), side, top, top), models().slabTop(name + "_top", side, top, top), models().cubeColumn(name(slab) + "_double", side, top));
+		}
+	}
+
 	public void flintBlock(RegistryObject<Block> block) {
 		ModelFile model = cubeAll(block.get());
 		ModelFile litModel = models().cubeAll("flint_block_lit", modLoc("block/flint_block_lit"));
 
 		this.getVariantBuilder(block.get()).forAllStates(state -> ConfiguredModel.allRotations(state.getValue(FlintBlock.LIT) ? litModel : model, false));
 		this.blockItem(block);
-	}
-
-	public void charcoalBlock(RegistryObject<Block> registryObject) {
-		RotatedPillarBlock block = (RotatedPillarBlock) registryObject.get();
-
-		ModelFile vertical = models().cubeColumn(name(block), blockTexture(block), blockTexture(block).withSuffix("_top"));
-		ModelFile horizontal = models().cubeColumnHorizontal(name(block) + "_horizontal", blockTexture(block), blockTexture(block).withSuffix("_top"));
-		ModelFile verticalLit = models().cubeColumn(name(block) + "_lit", blockTexture(block).withSuffix("_lit"), blockTexture(block).withSuffix("_top_lit"));
-		ModelFile horizontalLit = models().cubeColumnHorizontal(name(block) + "_horizontal_lit", blockTexture(block).withSuffix("_lit"), blockTexture(block).withSuffix("_top_lit"));
-
-		this.getVariantBuilder(block)
-				.partialState().with(CharcoalBlock.LIT, false).with(RotatedPillarBlock.AXIS, Axis.Y).modelForState().modelFile(vertical).addModel()
-				.partialState().with(CharcoalBlock.LIT, false).with(RotatedPillarBlock.AXIS, Axis.Z).modelForState().modelFile(horizontal).rotationX(90).addModel()
-				.partialState().with(CharcoalBlock.LIT, false).with(RotatedPillarBlock.AXIS, Axis.X).modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel()
-				.partialState().with(CharcoalBlock.LIT, true).with(RotatedPillarBlock.AXIS, Axis.Y).modelForState().modelFile(verticalLit).addModel()
-				.partialState().with(CharcoalBlock.LIT, true).with(RotatedPillarBlock.AXIS, Axis.Z).modelForState().modelFile(horizontalLit).rotationX(90).addModel()
-				.partialState().with(CharcoalBlock.LIT, true).with(RotatedPillarBlock.AXIS, Axis.X).modelForState().modelFile(horizontalLit).rotationX(90).rotationY(90).addModel();
-
-		this.blockItem(registryObject);
 	}
 
 	public void coalBlock(RegistryObject<Block> registryObject) {
@@ -1104,7 +1123,11 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 
 	@Override
 	public void blockItem(Block block) {
-		this.simpleBlockItem(block, new ExistingModelFile(blockModel(block), this.models().existingFileHelper));
+		this.simpleBlockItem(block, this.existingModel(blockModel(block)));
+	}
+
+	public ExistingModelFile existingModel(ResourceLocation location) {
+		return new ExistingModelFile(location, this.models().existingFileHelper);
 	}
 
 	public ResourceLocation blockModel(Block block) {
