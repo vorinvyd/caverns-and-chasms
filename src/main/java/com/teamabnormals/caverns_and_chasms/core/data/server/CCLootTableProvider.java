@@ -2,6 +2,7 @@ package com.teamabnormals.caverns_and_chasms.core.data.server;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.teamabnormals.caverns_and_chasms.common.advancement.CopperGolemPredicate;
 import com.teamabnormals.caverns_and_chasms.common.block.*;
 import com.teamabnormals.caverns_and_chasms.common.item.GoldenBucketItem;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
@@ -62,7 +63,8 @@ public class CCLootTableProvider extends LootTableProvider {
 				new LootTableProvider.SubProviderEntry(CCBlockLoot::new, LootContextParamSets.BLOCK),
 				new LootTableProvider.SubProviderEntry(CCEntityLoot::new, LootContextParamSets.ENTITY),
 				new LootTableProvider.SubProviderEntry(CCChestLoot::new, LootContextParamSets.CHEST),
-				new LootTableProvider.SubProviderEntry(CCArchaeologyLoot::new, LootContextParamSets.ARCHAEOLOGY)
+				new LootTableProvider.SubProviderEntry(CCArchaeologyLoot::new, LootContextParamSets.ARCHAEOLOGY),
+				new LootTableProvider.SubProviderEntry(CCGiftLoot::new, LootContextParamSets.GIFT)
 		));
 	}
 
@@ -88,6 +90,7 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.add(SOUL_SILVER_ORE.get(), (block) -> createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(CCItems.SILVER_NUGGET.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 6.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))));
 			this.add(TIN_ORE.get(), (block) -> createOreDrop(block, CCItems.RAW_TIN.get()));
 			this.add(DEEPSLATE_TIN_ORE.get(), (block) -> createOreDrop(block, CCItems.RAW_TIN.get()));
+			this.add(CYLINDRITE_TIN_ORE.get(), (block) -> createOreDrop(block, CCItems.RAW_TIN.get()));
 			this.add(CASSITERITE_TIN_ORE.get(), (block) -> createOreDrop(block, CCItems.RAW_TIN.get()));
 			this.add(SPINEL_ORE.get(), this::createSpinelOreDrops);
 			this.add(DEEPSLATE_SPINEL_ORE.get(), this::createSpinelOreDrops);
@@ -127,8 +130,30 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.add(EUMUS_BRICK.get(), this::createIngotDrops);
 
 			this.dropSelf(ROTTEN_FLESH_BLOCK.get());
+
+			this.dropSelf(GUNPOWDER_BLOCK.get());
+
+			this.dropSelf(SPARKLER.getFirst().get());
+			this.dropSelf(WHITE_SPARKLER.getFirst().get());
+			this.dropSelf(ORANGE_SPARKLER.getFirst().get());
+			this.dropSelf(MAGENTA_SPARKLER.getFirst().get());
+			this.dropSelf(LIGHT_BLUE_SPARKLER.getFirst().get());
+			this.dropSelf(YELLOW_SPARKLER.getFirst().get());
+			this.dropSelf(LIME_SPARKLER.getFirst().get());
+			this.dropSelf(PINK_SPARKLER.getFirst().get());
+			this.dropSelf(GRAY_SPARKLER.getFirst().get());
+			this.dropSelf(LIGHT_GRAY_SPARKLER.getFirst().get());
+			this.dropSelf(CYAN_SPARKLER.getFirst().get());
+			this.dropSelf(PURPLE_SPARKLER.getFirst().get());
+			this.dropSelf(BLUE_SPARKLER.getFirst().get());
+			this.dropSelf(BROWN_SPARKLER.getFirst().get());
+			this.dropSelf(GREEN_SPARKLER.getFirst().get());
+			this.dropSelf(RED_SPARKLER.getFirst().get());
+			this.dropSelf(BLACK_SPARKLER.getFirst().get());
+
 			this.dropSelf(NECROMIUM_BLOCK.get());
 			this.dropSelf(DEEPER_HEAD.get());
+			this.dropSelf(EVENDEEPER_HEAD.get());
 			this.dropSelf(PEEPER_HEAD.get());
 			this.dropSelf(MIME_HEAD.get());
 
@@ -144,8 +169,12 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.dropSelf(TIN_BLOCK.get());
 			this.dropSelf(RAW_TIN_BLOCK.get());
 			this.dropSelf(TIN_BARS.get());
+			this.dropSelf(TIN_CHAIN.get());
+			this.dropSelf(TIN_BULB.get());
 			this.dropSelf(FLOAT_GLASS.get());
 			this.dropSelf(FLOAT_GLASS_PANE.get());
+			this.dropSelf(FROSTED_GLASS.get());
+			this.dropSelf(FROSTED_GLASS_PANE.get());
 
 			this.dropSelf(HOLD_PLATE.get());
 			this.dropSelf(HOLD_BUTTON.get());
@@ -156,9 +185,10 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.dropSelf(HOOP.get());
 			this.add(STORAGE_DUCT.get(), this::createNameableBlockEntityTable);
 			this.dropSelf(STORAGE_DUCT_HATCH.get());
+			this.dropSelf(TINPLATE_BLOCK.get());
 
-			this.dropSelf(ROLLER_DOOR.get());
-			this.dropOther(ROLLER_DOOR_HEADER.get(), ROLLER_DOOR.get());
+			this.add(ROLLER_DOOR.get(), noDrop());
+			this.add(ROLLER_DOOR_HEADER.get(), noDrop());
 
 			this.dropSelf(COPPER_RAIL.get());
 			this.dropSelf(EXPOSED_COPPER_RAIL.get());
@@ -305,9 +335,24 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.blockFamily(COBBLED_DEEPSLATE_TILES_FAMILY);
 
 			this.dropSelf(STONE_WALL.get());
+
 			this.dropSelf(POLISHED_GRANITE_WALL.get());
+			this.dropSelf(CHISELED_POLISHED_GRANITE.get());
+			this.dropSelf(GRANITE_PILLAR.get());
+			this.blockFamily(GRANITE_BRICKS_FAMILY);
+			this.blockFamily(GRANITE_TILES_FAMILY);
+
 			this.dropSelf(POLISHED_DIORITE_WALL.get());
+			this.dropSelf(CHISELED_POLISHED_DIORITE.get());
+			this.dropSelf(DIORITE_PILLAR.get());
+			this.blockFamily(DIORITE_BRICKS_FAMILY);
+			this.blockFamily(DIORITE_TILES_FAMILY);
+
 			this.dropSelf(POLISHED_ANDESITE_WALL.get());
+			this.dropSelf(CHISELED_POLISHED_ANDESITE.get());
+			this.dropSelf(ANDESITE_PILLAR.get());
+			this.blockFamily(ANDESITE_BRICKS_FAMILY);
+			this.blockFamily(ANDESITE_TILES_FAMILY);
 
 			this.dropSelf(CALCITE_STAIRS.get());
 			this.dropSelf(CALCITE_WALL.get());
@@ -315,7 +360,6 @@ public class CCLootTableProvider extends LootTableProvider {
 			this.dropSelf(CALCITE_PILLAR.get());
 			this.blockFamily(POLISHED_CALCITE_FAMILY);
 			this.blockFamily(CALCITE_BRICKS_FAMILY);
-			this.blockFamily(SMOOTH_CALCITE_FAMILY);
 
 			this.dropSelf(TUFF_STAIRS.get());
 			this.dropSelf(TUFF_WALL.get());
@@ -326,6 +370,14 @@ public class CCLootTableProvider extends LootTableProvider {
 
 			this.blockFamily(SUGILITE_FAMILY);
 			this.blockFamily(POLISHED_SUGILITE_FAMILY);
+			this.blockFamily(SUGILITE_BRICKS_FAMILY);
+			this.dropSelf(SUGILITE_PILLAR.get());
+
+			this.blockFamily(CYLINDRITE_FAMILY);
+			this.blockFamily(CYLINDRITE_BRICKS_FAMILY);
+			this.dropSelf(CYLINDRITE_PILLAR.get());
+			this.blockFamily(POLISHED_CYLINDRITE_FAMILY);
+			this.blockFamily(SMOOTH_CYLINDRITE_FAMILY);
 
 			this.blockFamily(CASSITERITE_FAMILY);
 			this.blockFamily(CASSITERITE_BRICKS_FAMILY);
@@ -374,7 +426,7 @@ public class CCLootTableProvider extends LootTableProvider {
 
 			this.dropSelf(ZIRCONIA_BLOCK.get());
 			this.dropSelf(ZIRCONIA_LAMP.get());
-			;
+
 			this.dropSelf(ORNATE_GLASS.get());
 			this.dropSelf(ORNATE_GLASS_PANE.get());
 
@@ -502,8 +554,7 @@ public class CCLootTableProvider extends LootTableProvider {
 												);
 									})
 							))
-					)
-					;
+					);
 		}
 
 		protected LootTable.Builder createToolboxDrop(Block p_124295_) {
@@ -540,13 +591,25 @@ public class CCLootTableProvider extends LootTableProvider {
 						.mainhand(ItemPredicate.Builder.item().of(ItemTags.PICKAXES)
 								.hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, Ints.ANY)).build()).build()));
 
+		public static LootPoolSingletonContainer.Builder<?> copperIngot(ItemLike copperIngot, int oxidation, boolean waxed) {
+			return LootItem.lootTableItem(copperIngot).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))).when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().subPredicate(CopperGolemPredicate.copperGolem(Ints.exactly(oxidation), waxed))));
+		}
+
 		@Override
 		public void generate() {
-			this.add(COPPER_GOLEM.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.COPPER_INGOT).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
-			this.add(OXIDIZED_COPPER_GOLEM.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.COPPER_INGOT).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
+			this.add(COPPER_GOLEM.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+					.add(copperIngot(Items.COPPER_INGOT, 0, false))
+					.add(copperIngot(CCItems.EXPOSED_COPPER_INGOT.get(), 1, false))
+					.add(copperIngot(CCItems.WEATHERED_COPPER_INGOT.get(), 2, false))
+					.add(copperIngot(CCItems.WAXED_COPPER_INGOT.get(), 0, true))
+					.add(copperIngot(CCItems.WAXED_EXPOSED_COPPER_INGOT.get(), 1, true))
+					.add(copperIngot(CCItems.WAXED_WEATHERED_COPPER_INGOT.get(), 2, true))));
+			this.add(OXIDIZED_COPPER_GOLEM.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+					.add(copperIngot(CCItems.OXIDIZED_COPPER_INGOT.get(), 3, false))
+					.add(copperIngot(CCItems.WAXED_OXIDIZED_COPPER_INGOT.get(), 3, true))));
 			this.add(DEEPER.get(), LootTable.lootTable()
 					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.GUNPOWDER)
-							.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 3.0F)))
+							.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 4.0F)))
 							.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
 							.apply(FortuneEnchantFunction.fortuneMultiplier(UniformGenerator.between(0.0F, 1.0F)).when(HAS_PICKAXE))
 							.when(HAS_SILK_TOUCH.invert())
@@ -557,7 +620,25 @@ public class CCLootTableProvider extends LootTableProvider {
 					)
 					.withPool(LootPool.lootPool().add(TagEntry.expandTag(ItemTags.CREEPER_DROP_MUSIC_DISCS))
 							.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, EntityPredicate.Builder.entity().of(EntityTypeTags.SKELETONS)))));
-			this.add(PEEPER.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.GUNPOWDER).apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))).withPool(LootPool.lootPool().add(TagEntry.expandTag(ItemTags.CREEPER_DROP_MUSIC_DISCS)).when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, EntityPredicate.Builder.entity().of(EntityTypeTags.SKELETONS)))));
+			this.add(EVENDEEPER.get(), LootTable.lootTable()
+					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.GUNPOWDER)
+							.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 6.0F)))
+							.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+							.apply(FortuneEnchantFunction.fortuneMultiplier(UniformGenerator.between(0.0F, 1.0F)).when(HAS_PICKAXE))
+							.when(HAS_SILK_TOUCH.invert())
+					))
+					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.DEEPSLATE)
+							.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+							.when(HAS_SILK_TOUCH))
+					)
+					.withPool(LootPool.lootPool().add(TagEntry.expandTag(ItemTags.CREEPER_DROP_MUSIC_DISCS))
+							.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, EntityPredicate.Builder.entity().of(EntityTypeTags.SKELETONS)))));
+			this.add(PEEPER.get(), LootTable.lootTable()
+					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.GUNPOWDER)
+							.apply(SetItemCountFunction.setCount(UniformGenerator.between(4.0F, 8.0F)))
+							.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))))
+					.withPool(LootPool.lootPool().add(TagEntry.expandTag(ItemTags.CREEPER_DROP_MUSIC_DISCS))
+							.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, EntityPredicate.Builder.entity().of(EntityTypeTags.SKELETONS)))));
 			this.add(MIME.get(), LootTable.lootTable()
 					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
 							.add(LootItem.lootTableItem(CCItems.SPINEL.get())
@@ -575,7 +656,7 @@ public class CCLootTableProvider extends LootTableProvider {
 			);
 			this.add(GRAZER.get(), LootTable.lootTable()
 					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-							.add(LootItem.lootTableItem(CCItems.RAW_TIN.get())
+							.add(LootItem.lootTableItem(CCItems.TIN_INGOT.get())
 									.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
 									.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
 							)
@@ -590,7 +671,7 @@ public class CCLootTableProvider extends LootTableProvider {
 			);
 			this.add(SADDLED_GRAZER.get(), LootTable.lootTable()
 					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-							.add(LootItem.lootTableItem(CCItems.RAW_TIN.get())
+							.add(LootItem.lootTableItem(CCItems.TIN_INGOT.get())
 									.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
 									.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
 							)
@@ -598,6 +679,7 @@ public class CCLootTableProvider extends LootTableProvider {
 			);
 //			this.add(FLY.get(), LootTable.lootTable());
 			this.add(RAT.get(), LootTable.lootTable());
+			this.add(CAVEFISH.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(CCItems.CAVEFISH.get()).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F))))).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(Items.BONE_MEAL)).when(LootItemRandomChanceCondition.randomChance(0.05F))));
 			this.add(GLARE.get(), LootTable.lootTable());
 			this.add(LOST_GOAT.get(), LootTable.lootTable());
 
@@ -627,7 +709,7 @@ public class CCLootTableProvider extends LootTableProvider {
 							.add(LootItem.lootTableItem(CCItems.GOLDEN_BUCKET.get()).setWeight(4))
 							.add(LootItem.lootTableItem(CCItems.GOLDEN_LAVA_BUCKET.get()).setWeight(3))
 							.add(LootItem.lootTableItem(CCItems.GOLDEN_LAVA_BUCKET.get()).setWeight(2).apply(fluidLevelTag(1)))
-							.add(LootItem.lootTableItem(CCItems.GOLDEN_LAVA_BUCKET.get()).setWeight(1).apply(fluidLevelTag(2)))
+							.add(LootItem.lootTableItem(CCItems.GOLDEN_LAVA_BUCKET.get()).apply(fluidLevelTag(2)))
 					));
 
 			consumer.accept(CavernsAndChasms.location("chests/vault"), LootTable.lootTable()
@@ -690,7 +772,6 @@ public class CCLootTableProvider extends LootTableProvider {
 		}
 	}
 
-
 	public static class CCArchaeologyLoot implements LootTableSubProvider {
 		public static final ResourceLocation FORGE_COMMON = CavernsAndChasms.location("archaeology/forge_common");
 		public static final ResourceLocation FORGE_RARE = CavernsAndChasms.location("archaeology/forge_rare");
@@ -707,12 +788,17 @@ public class CCLootTableProvider extends LootTableProvider {
 							.add(LootItem.lootTableItem(Items.SCAFFOLDING).setWeight(5))
 							.add(LootItem.lootTableItem(Items.BAMBOO).setWeight(4))
 							.add(LootItem.lootTableItem(Items.BUCKET).setWeight(3))
+							.add(LootItem.lootTableItem(Items.TNT_MINECART))
+							.add(LootItem.lootTableItem(Items.FURNACE_MINECART))
+							.add(LootItem.lootTableItem(Items.MINECART))
+							.add(LootItem.lootTableItem(Items.EMERALD).setWeight(3))
 							.add(LootItem.lootTableItem(Items.DIAMOND).setWeight(2))
 							.add(LootItem.lootTableItem(CCItems.ZIRCONIA.get()))
 					));
 
 			consumer.accept(FORGE_RARE, LootTable.lootTable()
 					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+							.add(LootItem.lootTableItem(CCItems.MUSIC_DISC_ANALOGUE.get()))
 							.add(LootItem.lootTableItem(CCItems.BOOM_POTTERY_SHERD.get()).setWeight(3))
 							.add(LootItem.lootTableItem(CCItems.CAST_POTTERY_SHERD.get()).setWeight(3))
 							.add(LootItem.lootTableItem(CCItems.RIDE_POTTERY_SHERD.get()).setWeight(3))
@@ -722,6 +808,31 @@ public class CCLootTableProvider extends LootTableProvider {
 							.add(LootItem.lootTableItem(CCItems.RIM_ARMOR_TRIM_SMITHING_TEMPLATE.get()).setWeight(2))
 							.add(LootItem.lootTableItem(CCItems.PLATE_ARMOR_TRIM_SMITHING_TEMPLATE.get()).setWeight(2))
 							.add(LootItem.lootTableItem(CCItems.CORE_ARMOR_TRIM_SMITHING_TEMPLATE.get()).setWeight(2))
+					));
+		}
+	}
+
+	public static class CCGiftLoot implements LootTableSubProvider {
+		public static final ResourceLocation RAT_SPAWN_ITEMS = CavernsAndChasms.location("equipment/rat_spawn_items");
+
+		@Override
+		public void generate(BiConsumer<ResourceLocation, LootTable.Builder> consumer) {
+			consumer.accept(RAT_SPAWN_ITEMS, LootTable.lootTable()
+					.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+							.add(LootItem.lootTableItem(Items.ROTTEN_FLESH).setWeight(120))
+							.add(LootItem.lootTableItem(Items.BONE).setWeight(80))
+							.add(LootItem.lootTableItem(Items.STRING).setWeight(80))
+							.add(LootItem.lootTableItem(CCItems.CAVEFISH.get()).setWeight(70))
+							.add(LootItem.lootTableItem(Items.SPIDER_EYE).setWeight(60))
+							.add(LootItem.lootTableItem(Items.COAL).setWeight(50))
+							.add(LootItem.lootTableItem(Items.REDSTONE).setWeight(50))
+							.add(LootItem.lootTableItem(Items.SLIME_BALL).setWeight(20))
+							.add(LootItem.lootTableItem(Items.IRON_NUGGET).setWeight(15))
+							.add(LootItem.lootTableItem(Items.GOLD_NUGGET).setWeight(15))
+							.add(LootItem.lootTableItem(CCItems.SILVER_NUGGET.get()).setWeight(15))
+							.add(LootItem.lootTableItem(Items.LAPIS_LAZULI).setWeight(8))
+							.add(LootItem.lootTableItem(CCItems.SPINEL.get()).setWeight(8))
+							.add(LootItem.lootTableItem(CCItems.TURQUOISE.get()))
 					));
 		}
 	}

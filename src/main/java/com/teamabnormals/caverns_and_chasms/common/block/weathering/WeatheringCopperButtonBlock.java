@@ -8,8 +8,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.WeatheringCopper;
@@ -28,7 +28,7 @@ public class WeatheringCopperButtonBlock extends CopperButtonBlock implements CC
 	@Override
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (((stack.is(ItemTags.AXES) && this.weatherState != WeatherState.UNAFFECTED) || stack.is(Items.HONEYCOMB)) && !state.getValue(POWERED))
+		if (((stack.is(ItemTags.AXES) && this.weatherState != WeatherState.UNAFFECTED) || stack.getItem() instanceof HoneycombItem) && !state.getValue(POWERED))
 			return InteractionResult.PASS;
 		return super.use(state, level, pos, player, hand, result);
 	}

@@ -13,8 +13,13 @@ public class CCConfig {
 		public final DoubleValue creeperExplosionNerfFactor;
 
 		public final IntValue deeperMaxSpawnHeight;
+		public final IntValue evendeeperMaxSpawnHeight;
 		public final IntValue grazerMaxSpawnHeight;
 		public final IntValue peeperMaxSpawnHeight;
+
+		public final DoubleValue ratPackSpawnChance;
+		public final IntValue minimumRatPackSize;
+		public final IntValue maximumRatPackSize;
 
 		public final BooleanValue fragileStoneDropsOres;
 		public boolean fragileStoneDropsOresEnabled;
@@ -22,10 +27,13 @@ public class CCConfig {
 		public final BooleanValue chainmailArmorIncreasesDamage;
 		public final BooleanValue goldenArmorIncreasesSpeed;
 
+		public final BooleanValue placeableItems;
+
 		public final BooleanValue betterRailPlacement;
 		public final IntValue betterRailPlacementRange;
 
 		public final BooleanValue preventReplacingTrims;
+		public final BooleanValue zirconiaUniversalRepairing;
 
 		public Common(ForgeConfigSpec.Builder builder) {
 			builder.push("mobs");
@@ -36,17 +44,32 @@ public class CCConfig {
 			builder.push("deeper");
 			deeperMaxSpawnHeight = builder.defineInRange("Deeper max spawn height", 60, -64, 320);
 			builder.pop();
+			builder.push("evendeeper");
+			evendeeperMaxSpawnHeight = builder.defineInRange("Evendeeper max spawn height", -4, -64, 320);
+			builder.pop();
 			builder.push("grazer");
 			grazerMaxSpawnHeight = builder.defineInRange("Grazer max spawn height", -4, -64, 320);
 			builder.pop();
 			builder.push("peeper");
 			peeperMaxSpawnHeight = builder.defineInRange("Peeper max spawn height", -4, -64, 320);
 			builder.pop();
+			builder.push("rat");
+			ratPackSpawnChance = builder.comment("The chance a pack of Rats has to spawn with a regular Rat spawn").defineInRange("Rat pack spawn chance", 0.2D, 0, Double.MAX_VALUE);
+			minimumRatPackSize = builder.defineInRange("Minimum rat pack size", 6, 0, Integer.MAX_VALUE);
+			maximumRatPackSize = builder.defineInRange("Maximum rat pack size", 10, 0, Integer.MAX_VALUE);
+			builder.pop();
 			builder.pop();
 
 			builder.push("blocks");
 			builder.push("fragile_stone");
 			fragileStoneDropsOres = builder.comment("If ores next to or within Fragile Stone and Deepslate fall when the neighbor blocks crumble").define("Fragile stone collapses ores", true);
+			builder.pop();
+			builder.pop();
+
+			builder.push("items");
+			placeableItems = builder.comment("If items like Ingots, Bricks, Coal, and Charcoal can be placed", "Individual items can be disabled through the #caverns_and_chasms:placeable_items item tag").define("Placeable items", true);
+			builder.push("zirconia");
+			zirconiaUniversalRepairing = builder.comment("If Zirconia can be used as a universal repair material").define("Zirconia universal repairing", true);
 			builder.pop();
 			builder.pop();
 

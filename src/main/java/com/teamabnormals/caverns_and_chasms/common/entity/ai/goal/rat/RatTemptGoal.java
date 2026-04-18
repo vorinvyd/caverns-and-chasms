@@ -1,6 +1,6 @@
 package com.teamabnormals.caverns_and_chasms.common.entity.ai.goal.rat;
 
-import com.teamabnormals.caverns_and_chasms.common.entity.animal.Rat;
+import com.teamabnormals.caverns_and_chasms.common.entity.animal.rat.Rat;
 import com.teamabnormals.caverns_and_chasms.core.other.tags.CCItemTags;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,6 +15,11 @@ public class RatTemptGoal extends TemptGoal {
 
 	@Override
 	public boolean canUse() {
-		return this.rat.trustsPlayers() && super.canUse();
+		return !this.rat.isSittingBecauseOrdered() && this.rat.isTame() && super.canUse();
+	}
+
+	@Override
+	public boolean canContinueToUse() {
+		return !this.rat.isSittingBecauseOrdered() && super.canContinueToUse();
 	}
 }

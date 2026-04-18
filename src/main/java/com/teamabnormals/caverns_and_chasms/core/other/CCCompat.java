@@ -3,27 +3,41 @@ package com.teamabnormals.caverns_and_chasms.core.other;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.teamabnormals.blueprint.core.util.BlockUtil;
 import com.teamabnormals.blueprint.core.util.DataUtil;
+import com.teamabnormals.blueprint.core.util.DataUtil.AlternativeDispenseBehavior;
+import com.teamabnormals.caverns_and_chasms.common.block.BrazierBlock;
+import com.teamabnormals.caverns_and_chasms.common.block.CoalBlock;
+import com.teamabnormals.caverns_and_chasms.common.block.Sparkler;
 import com.teamabnormals.caverns_and_chasms.common.dispenser.*;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.registry.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.sensing.VillagerHostilesSensor;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.HoneycombItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.FireworkStarRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import net.minecraftforge.fluids.FluidInteractionRegistry.InteractionInformation;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CCCompat {
 
@@ -40,13 +54,11 @@ public class CCCompat {
 		CCDecoratedPotPatterns.registerDecoratedPotPatterns();
 		CCCauldronInteractions.registerCauldronInteractions();
 		CCSoundEvents.registerNoteBlocks();
+		CCCriteriaTriggers.registerPredicates();
 
-		FluidInteractionRegistry.addInteraction(ForgeMod.LAVA_TYPE.get(), new InteractionInformation(
-				(level, currentPos, relativePos, currentState) -> {
-					return level.getBlockState(currentPos.below()).is(Blocks.BUBBLE_COLUMN);
-				},
-				CCBlocks.RHYOLITE.get().defaultBlockState()
-		));
+		FluidInteractionRegistry.addInteraction(ForgeMod.LAVA_TYPE.get(), new InteractionInformation((level, currentPos, relativePos, currentState) -> {
+			return level.getBlockState(currentPos.below()).is(Blocks.BUBBLE_COLUMN);
+		}, CCBlocks.RHYOLITE.get().defaultBlockState()));
 	}
 
 	public static void registerCompostables() {
@@ -88,11 +100,13 @@ public class CCCompat {
 		DataUtil.registerFlammable(CCBlocks.ZESTY_CAVE_GROWTHS.get(), 60, 100);
 
 		DataUtil.registerFlammable(CCBlocks.TMT.get(), 15, 100);
+		DataUtil.registerFlammable(CCBlocks.GUNPOWDER_BLOCK.get(), 15, 100);
 	}
 
 	private static void registerDispenserBehaviors() {
 		DispenserBlock.registerBehavior(CCItems.KUNAI.get(), new KunaiDispenseBehavior());
 		DispenserBlock.registerBehavior(CCItems.BLUNT_ARROW.get(), new BluntArrowDispenseBehavior());
+		DispenserBlock.registerBehavior(CCItems.RICOCHET_ARROW.get(), new RicochetArrowDispenseBehavior());
 		DispenserBlock.registerBehavior(CCItems.LARGE_ARROW.get(), new LargeArrowDispenserBehavior());
 		DispenserBlock.registerBehavior(CCBlocks.TMT.get(), new TMTDispenseBehavior());
 		DispenserBlock.registerBehavior(CCItems.GOLDEN_BUCKET.get(), new GoldenBucketDispenseBehavior());
@@ -106,14 +120,69 @@ public class CCCompat {
 		DispenserBlock.registerBehavior(CCItems.SILVER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.NETHERITE_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.NECROMIUM_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.EXPOSED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.WEATHERED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.OXIDIZED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.WAXED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.WAXED_EXPOSED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.WAXED_WEATHERED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.WAXED_OXIDIZED_COPPER_HORSE_ARMOR.get(), horseArmorDispenseBehavior);
 
 		DispenseItemBehavior armorDispenseBehavior = new ArmorDispenseBehavior();
 		DispenserBlock.registerBehavior(CCItems.DEEPER_HEAD.get(), armorDispenseBehavior);
+		DispenserBlock.registerBehavior(CCItems.EVENDEEPER_HEAD.get(), armorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.PEEPER_HEAD.get(), armorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.MIME_HEAD.get(), armorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.TETHER_POTION.get(), armorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.IMPACT_POTION.get(), armorDispenseBehavior);
 		DispenserBlock.registerBehavior(CCItems.TRAIL_POTION.get(), armorDispenseBehavior);
+
+		DispenserBlock.registerBehavior(CCItems.TINPLATE.get(), new OptionalDispenseItemBehavior() {
+			public ItemStack execute(BlockSource source, ItemStack stack) {
+				BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
+				Level level = source.getLevel();
+				BlockState blockstate = level.getBlockState(blockpos);
+				Optional<BlockState> optional = HoneycombItem.getWaxed(blockstate);
+				if (optional.isPresent()) {
+					level.setBlockAndUpdate(blockpos, optional.get());
+					level.levelEvent(3003, blockpos, 0);
+					stack.shrink(1);
+					this.setSuccess(true);
+					return stack;
+				} else {
+					return super.execute(source, stack);
+				}
+			}
+		});
+
+
+		DataUtil.registerAlternativeDispenseBehavior(new AlternativeDispenseBehavior(CavernsAndChasms.MOD_ID, Items.FLINT_AND_STEEL, (source, stack) -> {
+			BlockState state = source.getLevel().getBlockState(BlockUtil.offsetPos(source));
+			Block block = state.getBlock();
+			if (block instanceof CoalBlock || block instanceof BrazierBlock || block instanceof Sparkler) {
+				return state.hasProperty(BlockStateProperties.LIT) && (!state.getValue(BlockStateProperties.LIT) || block instanceof Sparkler) && (!state.hasProperty(BlockStateProperties.WATERLOGGED) || !state.getValue(BlockStateProperties.WATERLOGGED));
+			} else {
+				return false;
+			}
+		}, new OptionalDispenseItemBehavior() {
+			protected ItemStack execute(BlockSource source, ItemStack stack) {
+				Level level = source.getLevel();
+				BlockPos pos = BlockUtil.offsetPos(source);
+				BlockState state = level.getBlockState(pos);
+				if (!state.getValue(BlockStateProperties.LIT)) {
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, true));
+				} else if (state.getBlock() instanceof Sparkler sparkler) {
+					sparkler.explodeSparkler(state, level, pos);
+				}
+				level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
+				if (stack.hurt(1, level.random, null)) {
+					stack.setCount(0);
+				}
+
+				return stack;
+			}
+		}));
 	}
 
 	private static void changeLocalization() {
@@ -208,16 +277,21 @@ public class CCCompat {
 	}
 
 	private static void registerFireworkIngredients() {
-		FireworkStarRecipe.SHAPE_INGREDIENT = Ingredient.merge(List.of(FireworkStarRecipe.SHAPE_INGREDIENT, Ingredient.of(CCItems.DEEPER_HEAD.get(), CCItems.PEEPER_HEAD.get(), CCItems.MIME_HEAD.get())));
+		FireworkStarRecipe.SHAPE_INGREDIENT = Ingredient.merge(List.of(FireworkStarRecipe.SHAPE_INGREDIENT, Ingredient.of(CCItems.DEEPER_HEAD.get(), CCItems.EVENDEEPER_HEAD.get(), CCItems.PEEPER_HEAD.get(), CCItems.MIME_HEAD.get())));
 		FireworkStarRecipe.SHAPE_BY_ITEM.put(CCItems.DEEPER_HEAD.get(), FireworkRocketItem.Shape.CREEPER);
+		FireworkStarRecipe.SHAPE_BY_ITEM.put(CCItems.EVENDEEPER_HEAD.get(), FireworkRocketItem.Shape.CREEPER);
 		FireworkStarRecipe.SHAPE_BY_ITEM.put(CCItems.PEEPER_HEAD.get(), FireworkRocketItem.Shape.CREEPER);
 		FireworkStarRecipe.SHAPE_BY_ITEM.put(CCItems.MIME_HEAD.get(), FireworkRocketItem.Shape.CREEPER);
+		FireworkStarRecipe.TRAIL_INGREDIENT = Ingredient.merge(List.of(FireworkStarRecipe.TRAIL_INGREDIENT, Ingredient.of(CCItems.ZIRCONIA.get())));
 	}
 
 	private static void registerParrotImitations() {
 		DataUtil.registerParrotImitation(CCEntityTypes.DEEPER.get(), CCSoundEvents.PARROT_IMITATE_DEEPER.get());
+		DataUtil.registerParrotImitation(CCEntityTypes.EVENDEEPER.get(), CCSoundEvents.PARROT_IMITATE_EVENDEEPER.get());
 		DataUtil.registerParrotImitation(CCEntityTypes.PEEPER.get(), CCSoundEvents.PARROT_IMITATE_PEEPER.get());
 		DataUtil.registerParrotImitation(CCEntityTypes.MIME.get(), CCSoundEvents.PARROT_IMITATE_MIME.get());
+		DataUtil.registerParrotImitation(CCEntityTypes.GRAZER.get(), CCSoundEvents.PARROT_IMITATE_GRAZER.get());
+		DataUtil.registerParrotImitation(CCEntityTypes.SADDLED_GRAZER.get(), CCSoundEvents.PARROT_IMITATE_GRAZER.get());
 	}
 
 	private static void registerVibrationFrequencies() {

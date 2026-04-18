@@ -1,12 +1,15 @@
 package com.teamabnormals.caverns_and_chasms.common.block;
 
 import com.teamabnormals.caverns_and_chasms.common.item.silver.SilverItem;
+import com.teamabnormals.caverns_and_chasms.core.registry.CCSoundEvents;
 import com.teamabnormals.caverns_and_chasms.core.registry.datapack.CCDamageTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,11 +28,22 @@ public class SpikedRailBlock extends PoweredRailBlock {
 				double d1 = Math.abs(entity.getZ() - entity.zOld);
 				if (d0 >= 0.003F || d1 >= 0.003F) {
 					if (living.hurt(CCDamageTypes.spikedRail(level), 1.0F)) {
-						SilverItem.causeMagicDamageParticles(living);
+						SilverItem.causeMagicDamageEffects(null, living);
 					}
 				}
 			}
+		}
+	}
 
+	@Override
+	protected void updateState(BlockState state, Level level, BlockPos pos, Block block) {
+		boolean oldPowered = state.getValue(POWERED);
+		super.updateState(state, level, pos, block);
+		boolean newPowered = level.getBlockState(pos).getValue(POWERED);
+		if (!oldPowered && newPowered) {
+			level.playSound(null, pos, CCSoundEvents.SPIKED_RAIL_EXTEND.get(), SoundSource.BLOCKS);
+		} else if (oldPowered && !newPowered) {
+			level.playSound(null, pos, CCSoundEvents.SPIKED_RAIL_CONTRACT.get(), SoundSource.BLOCKS);
 		}
 	}
 }

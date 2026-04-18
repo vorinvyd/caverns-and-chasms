@@ -41,14 +41,14 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.copy(BlockTags.TRAPDOORS, ItemTags.TRAPDOORS);
 		this.copy(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS);
 		this.tag(ItemTags.BEACON_PAYMENT_ITEMS).add(SILVER_INGOT.get(), TIN_INGOT.get(), NECROMIUM_INGOT.get(), TURQUOISE.get(), ZIRCONIA.get());
-		this.tag(ItemTags.MUSIC_DISCS).add(MUSIC_DISC_EPILOGUE.get(), MUSIC_DISC_COPY.get());
+		this.tag(ItemTags.MUSIC_DISCS).add(MUSIC_DISC_ANALOGUE.get(), MUSIC_DISC_EPILOGUE.get(), MUSIC_DISC_COPY.get());
 		this.tag(ItemTags.PIGLIN_LOVED).add(CCBlocks.LAVA_LAMP.get().asItem(), CCBlocks.GOLDEN_BARS.get().asItem(), GOLDEN_BUCKET.get(), GOLDEN_WATER_BUCKET.get(), GOLDEN_LAVA_BUCKET.get(), GOLDEN_MILK_BUCKET.get(), GOLDEN_POWDER_SNOW_BUCKET.get(), CCBlocks.GOLD_BRICKS.get().asItem(), CCBlocks.GOLD_BRICK_STAIRS.get().asItem(), CCBlocks.GOLD_BRICK_SLAB.get().asItem(), CCBlocks.GOLD_BRICK_WALL.get().asItem(), CCBlocks.CHISELED_GOLD_BRICKS.get().asItem());
 		this.tag(ItemTags.PIGLIN_REPELLENTS).add(CCBlocks.SOUL_BRAZIER.get().asItem());
 		this.tag(ItemTags.BOATS).add(AZALEA_BOAT.getFirst().get());
 		this.tag(ItemTags.CHEST_BOATS).add(AZALEA_BOAT.getSecond().get());
 		this.tag(BlueprintItemTags.FURNACE_BOATS).add(AZALEA_FURNACE_BOAT.get());
 		this.tag(BlueprintItemTags.LARGE_BOATS).add(LARGE_AZALEA_BOAT.get());
-		this.tag(ItemTags.ARROWS).add(LARGE_ARROW.get(), BLUNT_ARROW.get());
+		this.tag(ItemTags.ARROWS).add(LARGE_ARROW.get(), BLUNT_ARROW.get(), RICOCHET_ARROW.get());
 		this.tag(ItemTags.TRIMMABLE_ARMOR).addTag(CCItemTags.COPPER_HELMETS).addTag(CCItemTags.COPPER_CHESTPLATES).addTag(CCItemTags.COPPER_LEGGINGS).addTag(CCItemTags.COPPER_BOOTS).add(
 				SILVER_HELMET.get(), SILVER_CHESTPLATE.get(), SILVER_LEGGINGS.get(), SILVER_BOOTS.get(),
 				NECROMIUM_HELMET.get(), NECROMIUM_CHESTPLATE.get(), NECROMIUM_LEGGINGS.get(), NECROMIUM_BOOTS.get(),
@@ -59,12 +59,14 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(ItemTags.TRIM_TEMPLATES).add(EXILE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), FORGER_ARMOR_TRIM_SMITHING_TEMPLATE.get(), IMMOLATE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), RIM_ARMOR_TRIM_SMITHING_TEMPLATE.get(), PLATE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), CORE_ARMOR_TRIM_SMITHING_TEMPLATE.get());
 		this.tag(ItemTags.DECORATED_POT_SHERDS).add(BOOM_POTTERY_SHERD.get(), CAST_POTTERY_SHERD.get(), RIDE_POTTERY_SHERD.get(), STALKER_POTTERY_SHERD.get());
 
+		this.copy(CCBlockTags.STANDING_SPARKLERS, CCItemTags.SPARKLERS);
 		this.copy(CCBlockTags.SILVER_ORES, CCItemTags.SILVER_ORES);
 		this.copy(CCBlockTags.TIN_ORES, CCItemTags.TIN_ORES);
 		this.copy(CCBlockTags.SPINEL_ORES, CCItemTags.SPINEL_ORES);
 		this.copy(CCBlockTags.TURQUOISE_ORES, CCItemTags.TURQUOISE_ORES);
 		this.copy(CCBlockTags.AZALEA_LOGS, CCItemTags.AZALEA_LOGS);
-		this.tag(CCItemTags.CUPRIC_FIRE_BASE_BLOCKS).addTag(Tags.Items.INGOTS_COPPER).addTag(CCItemTags.INGOTS_EXPOSED_COPPER).addTag(CCItemTags.INGOTS_WEATHERED_COPPER).addTag(CCItemTags.INGOTS_OXIDIZED_COPPER).addTag(Tags.Items.RAW_MATERIALS_COPPER);
+		this.tag(CCItemTags.COPPER_INGOTS).addTag(Tags.Items.INGOTS_COPPER).addTag(CCItemTags.INGOTS_EXPOSED_COPPER).addTag(CCItemTags.INGOTS_WEATHERED_COPPER).addTag(CCItemTags.INGOTS_OXIDIZED_COPPER);
+		this.tag(CCItemTags.CUPRIC_FIRE_BASE_BLOCKS).addTag(CCItemTags.COPPER_INGOTS).addTag(Tags.Items.RAW_MATERIALS_COPPER);
 		this.tag(CCItemTags.MAGIC_DAMAGE_ITEMS).add(SILVER_SWORD.get(), SILVER_PICKAXE.get(), SILVER_AXE.get(), SILVER_SHOVEL.get(), SILVER_HOE.get()).addOptional(new ResourceLocation("abnormals_delight", "silver_knife"));
 		this.tag(CCItemTags.EXPERIENCE_BOOST_ITEMS).add(Items.GOLDEN_SWORD, Items.GOLDEN_PICKAXE, Items.GOLDEN_AXE, Items.GOLDEN_SHOVEL, Items.GOLDEN_HOE).addOptional(new ResourceLocation("farmersdelight", "golden_knife"));
 		this.tag(CCItemTags.SLOWNESS_INFLICTING_ITEMS).add(NECROMIUM_SWORD.get(), NECROMIUM_PICKAXE.get(), NECROMIUM_AXE.get(), NECROMIUM_SHOVEL.get(), NECROMIUM_HOE.get()).addOptional(new ResourceLocation("abnormals_delight", "necromium_knife"));
@@ -72,13 +74,14 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(CCItemTags.GLARE_FOOD).add(Items.GLOW_BERRIES);
 		this.tag(CCItemTags.RAT_FOOD).add(Items.ROTTEN_FLESH);
 		this.tag(CCItemTags.RAT_TAME_ITEMS).add(Items.ROTTEN_FLESH);
-		this.tag(CCItemTags.ADDITIONAL_TOOLBOX_TOOLS).add(Items.SPYGLASS, Items.TOTEM_OF_UNDYING, TUNING_FORK.get());
+		this.tag(CCItemTags.ADDITIONAL_TOOLBOX_TOOLS).add(Items.SPYGLASS, MONOCLE.get(), Items.TOTEM_OF_UNDYING, TUNING_FORK.get(), Items.GOAT_HORN, COPPER_HORN.get(), LOST_GOAT_HORN.get(), BONE_FLUTE.get());
 		this.tag(CCItemTags.DISMANTLING_FUELS).addTag(CCItemTags.GEMS_SPINEL);
+		this.tag(CCItemTags.DISMANTLING_TABLE_CANNOT_DISMANTLE);
 		this.tag(CCItemTags.ATONING_FUELS).addTag(CCItemTags.GEMS_SPINEL);
-		this.tag(CCItemTags.FADED_TRIM_MODIFIERS).addTag(CCItemTags.GEMS_SPINEL);
-		this.tag(CCItemTags.EMISSIVE_TRIM_MODIFIERS).add(Items.BLAZE_POWDER);
+		this.tag(CCItemTags.TRIM_MODIFIERS).add(SPINEL.get(), Items.GLOW_INK_SAC, Items.PRISMARINE_SHARD);
 		this.tag(CCItemTags.UNREPAIRABLE_BY_ZIRCONIA);
 		this.tag(CCItemTags.CHANGES_HOOP_SIZE).add(TUNING_FORK.get());
+		this.tag(CCItemTags.ROLLER_DOOR_LIFT_ITEMS).add(TUNING_FORK.get());
 		this.tag(CCItemTags.PLACEABLE_ITEMS).add(
 				Items.COAL, Items.CHARCOAL, Items.BRICK, Items.NETHER_BRICK,
 				Items.COPPER_INGOT, EXPOSED_COPPER_INGOT.get(), WEATHERED_COPPER_INGOT.get(), OXIDIZED_COPPER_INGOT.get(),
@@ -119,6 +122,7 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(BlueprintItemTags.BUCKETS_LAVA).add(GOLDEN_LAVA_BUCKET.get());
 		this.tag(BlueprintItemTags.BUCKETS_MILK).add(GOLDEN_MILK_BUCKET.get());
 		this.tag(BlueprintItemTags.BUCKETS_POWDER_SNOW).add(GOLDEN_POWDER_SNOW_BUCKET.get());
+		this.tag(ItemTags.FISHES).add(CAVEFISH.get());
 		this.tag(CCItemTags.GEMS_SPINEL).add(SPINEL.get());
 		this.tag(CCItemTags.GEMS_TURQUOISE).add(TURQUOISE.get());
 		this.tag(CCItemTags.GEMS_ZIRCONIA).add(ZIRCONIA.get());
@@ -140,8 +144,9 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(CCItemTags.NUGGETS_TIN).add(TIN_NUGGET.get());
 		this.tag(CCItemTags.NUGGETS_NECROMIUM).add(NECROMIUM_NUGGET.get());
 		this.tag(Tags.Items.NUGGETS).addTag(CCItemTags.NUGGETS_SILVER).addTag(CCItemTags.NUGGETS_TIN).addTag(CCItemTags.NUGGETS_COPPER).addTag(CCItemTags.NUGGETS_NETHERITE).addTag(CCItemTags.NUGGETS_NECROMIUM);
-		this.tag(Tags.Items.HEADS).add(DEEPER_HEAD.get(), PEEPER_HEAD.get(), MIME_HEAD.get());
+		this.tag(Tags.Items.HEADS).add(DEEPER_HEAD.get(), EVENDEEPER_HEAD.get(), PEEPER_HEAD.get(), MIME_HEAD.get());
 		this.copy(BlueprintBlockTags.NOTE_BLOCK_TOP_INSTRUMENTS, ItemTags.NOTE_BLOCK_TOP_INSTRUMENTS);
+		this.tag(CCItemTags.WAX).add(Items.HONEYCOMB, TINPLATE.get());
 
 		this.tag(CCItemTags.COPPER_SWORDS).add(COPPER_SWORD.get(), EXPOSED_COPPER_SWORD.get(), WEATHERED_COPPER_SWORD.get(), OXIDIZED_COPPER_SWORD.get(), WAXED_COPPER_SWORD.get(), WAXED_EXPOSED_COPPER_SWORD.get(), WAXED_WEATHERED_COPPER_SWORD.get(), WAXED_OXIDIZED_COPPER_SWORD.get());
 		this.tag(CCItemTags.COPPER_PICKAXES).add(COPPER_PICKAXE.get(), EXPOSED_COPPER_PICKAXE.get(), WEATHERED_COPPER_PICKAXE.get(), OXIDIZED_COPPER_PICKAXE.get(), WAXED_COPPER_PICKAXE.get(), WAXED_EXPOSED_COPPER_PICKAXE.get(), WAXED_WEATHERED_COPPER_PICKAXE.get(), WAXED_OXIDIZED_COPPER_PICKAXE.get());
@@ -159,11 +164,12 @@ public class CCItemTagsProvider extends BlueprintItemTagsProvider {
 		this.tag(ItemTags.AXES).addTag(CCItemTags.COPPER_AXES).add(SILVER_AXE.get(), NECROMIUM_AXE.get());
 		this.tag(ItemTags.HOES).addTag(CCItemTags.COPPER_HOES).add(SILVER_HOE.get(), NECROMIUM_HOE.get());
 		this.tag(ItemTags.SHOVELS).addTag(CCItemTags.COPPER_SHOVELS).add(SILVER_SHOVEL.get(), NECROMIUM_SHOVEL.get());
+		this.tag(Tags.Items.TOOLS_SHIELDS).add(AEGIS.get());
 
-		this.tag(Tags.Items.ARMORS_HELMETS).addTag(CCItemTags.COPPER_HELMETS).add(SILVER_HELMET.get(), NECROMIUM_HELMET.get(), COWL.get());
-		this.tag(Tags.Items.ARMORS_CHESTPLATES).addTag(CCItemTags.COPPER_CHESTPLATES).add(SILVER_CHESTPLATE.get(), NECROMIUM_CHESTPLATE.get());
-		this.tag(Tags.Items.ARMORS_LEGGINGS).addTag(CCItemTags.COPPER_LEGGINGS).add(SILVER_LEGGINGS.get(), NECROMIUM_LEGGINGS.get());
-		this.tag(Tags.Items.ARMORS_BOOTS).addTag(CCItemTags.COPPER_BOOTS).add(SILVER_BOOTS.get(), NECROMIUM_BOOTS.get());
+		this.tag(Tags.Items.ARMORS_HELMETS).addTag(CCItemTags.COPPER_HELMETS).add(SILVER_HELMET.get(), NECROMIUM_HELMET.get(), COWL.get(), SANGUINE_HELMET.get());
+		this.tag(Tags.Items.ARMORS_CHESTPLATES).addTag(CCItemTags.COPPER_CHESTPLATES).add(SILVER_CHESTPLATE.get(), NECROMIUM_CHESTPLATE.get(), SANGUINE_CHESTPLATE.get());
+		this.tag(Tags.Items.ARMORS_LEGGINGS).addTag(CCItemTags.COPPER_LEGGINGS).add(SILVER_LEGGINGS.get(), NECROMIUM_LEGGINGS.get(), TOOLBELT.get(), SANGUINE_LEGGINGS.get());
+		this.tag(Tags.Items.ARMORS_BOOTS).addTag(CCItemTags.COPPER_BOOTS).add(SILVER_BOOTS.get(), NECROMIUM_BOOTS.get(), SANGUINE_BOOTS.get());
 
 		this.tag(CCItemTags.BOTTLES_MILK);
 		this.tag(CCItemTags.ENDER_FIRE_BASE_BLOCKS);

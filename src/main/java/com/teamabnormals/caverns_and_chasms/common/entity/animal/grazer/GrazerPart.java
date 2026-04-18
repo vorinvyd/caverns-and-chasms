@@ -1,6 +1,7 @@
 package com.teamabnormals.caverns_and_chasms.common.entity.animal.grazer;
 
-import com.teamabnormals.caverns_and_chasms.core.other.CCEvents;
+import com.teamabnormals.caverns_and_chasms.core.other.CCUtil;
+import com.teamabnormals.caverns_and_chasms.core.registry.CCSoundEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -49,7 +50,7 @@ public class GrazerPart extends PartEntity<AbstractGrazer> {
 	public void updatePosition() {
 		AbstractGrazer grazer = this.getParent();
 
-		Vec3 oldpos = this.calculatePosition(grazer.xOld, grazer.yOld, grazer.zOld, grazer.xRotO, grazer.yRotO);
+		Vec3 oldpos = this.calculatePosition(grazer.xOld, grazer.yOld, grazer.zOld, grazer.customXRotO, grazer.yRotO);
 		this.xo = oldpos.x;
 		this.yo = oldpos.y;
 		this.zo = oldpos.z;
@@ -57,7 +58,7 @@ public class GrazerPart extends PartEntity<AbstractGrazer> {
 		this.yOld = oldpos.y;
 		this.zOld = oldpos.z;
 
-		Vec3 newpos = this.calculatePosition(grazer.getX(), grazer.getY(), grazer.getZ(), grazer.getXRot(), grazer.getYRot());
+		Vec3 newpos = this.calculatePosition(grazer.getX(), grazer.getY(), grazer.getZ(), grazer.getCustomXRot(), grazer.getYRot());
 		this.setPos(newpos.x, newpos.y, newpos.z);
 	}
 
@@ -117,7 +118,8 @@ public class GrazerPart extends PartEntity<AbstractGrazer> {
 				Vec3 location = aabb.clip(attackerpos, attackerpos.add(directentity.getViewVector(1.0F).scale(partpos.subtract(attackerpos).length() + this.getDimensions(Pose.STANDING).height * 0.5D + 0.3D))).or(() -> aabb.clip(attackerpos, partpos)).orElse(partpos);
 				Vec3 normal = grazer.calculateDeflectionNormal(location);
 
-				CCEvents.playRicochetEffects(this.level(), location, normal, 0.8F, this.random);
+				if (!this.level().isClientSide)
+					CCUtil.playRicochetEffects(this.level(), location, normal, 0.8F, CCSoundEvents.GRAZER_DEFLECT.get(), 1.0F, this.random, true);
 
 				return false;
 			}
@@ -135,6 +137,11 @@ public class GrazerPart extends PartEntity<AbstractGrazer> {
 	@Override
 	public ItemStack getPickResult() {
 		return this.getParent().getPickResult();
+	}
+
+	@Override
+	public Entity getRootVehicle() {
+		return this.getParent().getRootVehicle();
 	}
 
 	@Override

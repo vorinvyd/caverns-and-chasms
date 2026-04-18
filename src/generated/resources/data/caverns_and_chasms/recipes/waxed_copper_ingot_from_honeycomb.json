@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "equipment",
+  "category": "misc",
   "group": "waxed_copper_ingot",
   "ingredients": [
     {
       "item": "minecraft:copper_ingot"
     },
     {
-      "item": "minecraft:honeycomb"
+      "tag": "forge:wax"
     }
   ],
   "result": {

@@ -1,6 +1,6 @@
 package com.teamabnormals.caverns_and_chasms.common.entity.ai.goal.rat;
 
-import com.teamabnormals.caverns_and_chasms.common.entity.animal.Rat;
+import com.teamabnormals.caverns_and_chasms.common.entity.animal.rat.Rat;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
@@ -14,6 +14,16 @@ public class RatRandomStrollGoal extends WaterAvoidingRandomStrollGoal {
 	public RatRandomStrollGoal(Rat rat) {
 		super(rat, 1.0D);
 		this.rat = rat;
+	}
+
+	@Override
+	public boolean canUse() {
+		return !this.rat.isSittingBecauseOrdered() && (!this.rat.isWounded() || this.rat.getRandom().nextInt(3) == 0) && super.canUse();
+	}
+
+	@Override
+	public boolean canContinueToUse() {
+		return !this.rat.isSittingBecauseOrdered() && super.canContinueToUse();
 	}
 
 	@Nullable

@@ -2,13 +2,19 @@ package com.teamabnormals.caverns_and_chasms.core.other;
 
 import com.teamabnormals.caverns_and_chasms.client.gui.MonocleGuiOverlay;
 import com.teamabnormals.caverns_and_chasms.client.gui.MonocleGuiOverlay.MonocleHeadGuiOverlay;
+import com.teamabnormals.caverns_and_chasms.client.gui.screens.inventory.tooltip.ClientPackingContainerTooltip;
 import com.teamabnormals.caverns_and_chasms.client.model.DeeperHeadModel;
+import com.teamabnormals.caverns_and_chasms.client.model.EvendeeperHeadModel;
 import com.teamabnormals.caverns_and_chasms.client.model.MimeHeadModel;
 import com.teamabnormals.caverns_and_chasms.client.model.PeeperHeadModel;
+import com.teamabnormals.caverns_and_chasms.client.renderer.AegisRenderer;
 import com.teamabnormals.caverns_and_chasms.client.renderer.entity.layers.RatOnShoulderLayer;
 import com.teamabnormals.caverns_and_chasms.client.renderer.entity.layers.UnicornHornLayer;
 import com.teamabnormals.caverns_and_chasms.common.item.BejeweledPearlItem;
 import com.teamabnormals.caverns_and_chasms.common.item.GoldenBucketItem;
+import com.teamabnormals.caverns_and_chasms.common.item.PackingContainerItem;
+import com.teamabnormals.caverns_and_chasms.common.item.PackingContainerItem.PackingContainerTooltip;
+import com.teamabnormals.caverns_and_chasms.common.item.TrimModifierSmithingTemplateItem;
 import com.teamabnormals.caverns_and_chasms.common.item.copper.TuningForkItem;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBlocks;
@@ -17,14 +23,14 @@ import com.teamabnormals.caverns_and_chasms.core.registry.CCItems;
 import com.teamabnormals.caverns_and_chasms.core.registry.datapack.CCTrimMaterials;
 import com.teamabnormals.caverns_and_chasms.integration.quark.ToolboxTooltips.ToolboxComponent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.SmithingScreen;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -37,10 +43,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -48,6 +51,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -60,18 +64,25 @@ public class CCClientCompat {
 		registerItemProperties();
 		CCTrimMaterials.registerArmorMaterialOverrides();
 		CCSkullTypes.registerSkullModels();
+
+		List<ResourceLocation> list = new ArrayList<>(SmithingScreen.EMPTY_SLOT_SMITHING_TEMPLATES);
+		list.add(TrimModifierSmithingTemplateItem.EMPTY_SLOT_SMITHING_TEMPLATE_TRIM_MODIFIER);
+		SmithingScreen.EMPTY_SLOT_SMITHING_TEMPLATES = list;
+	}
+
+	@SubscribeEvent
+	public static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(PackingContainerTooltip.class, ClientPackingContainerTooltip::new);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@SubscribeEvent
 	public static void registerLayers(EntityRenderersEvent.AddLayers event) {
-		EntityModelSet modelset = event.getEntityModels();
-		EntityRendererProvider.Context context = event.getContext();
-		ItemInHandRenderer iteminhandrenderer = context.getItemInHandRenderer();
+		EntityModelSet models = event.getEntityModels();
 
 		event.getSkins().forEach(skin -> {
 			PlayerRenderer renderer = event.getSkin(skin);
-			renderer.addLayer(new RatOnShoulderLayer(renderer, modelset));
+			renderer.addLayer(new RatOnShoulderLayer(renderer, models));
 		});
 
 		for (EntityRenderer<?> renderer : Minecraft.getInstance().getEntityRenderDispatcher().renderers.values()) {
@@ -82,20 +93,27 @@ public class CCClientCompat {
 	}
 
 	@SubscribeEvent
+	public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+		event.register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageWaterColor(level, pos) : -1, CCBlocks.AMBIENT_BUBBLE_COLUMN.get());
+	}
+
+	@SubscribeEvent
 	public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
 		event.register((stack, color) -> color > 0 ? -1 : TuningForkItem.getNoteColor(stack), CCItems.TUNING_FORK.get());
 		event.register((stack, color) -> color > 0 ? -1 : PotionUtils.getColor(stack), CCItems.TETHER_POTION.get());
 		event.register((stack, color) -> color > 0 ? -1 : PotionUtils.getColor(stack), CCItems.IMPACT_POTION.get());
 		event.register((stack, color) -> color > 0 ? -1 : PotionUtils.getColor(stack), CCItems.TRAIL_POTION.get());
 		event.register((stack, color) -> color > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), Items.BUNDLE);
-		event.register((stack, color) -> color > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), CCItems.FOIL.get());
 		event.register((stack, color) -> color > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), CCItems.COWL.get());
+		event.register((stack, color) -> color > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), CCItems.TOOLBELT.get());
 		event.register((stack, color) -> color > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), CCItems.UNICORN_HORN.get());
+		event.register((stack, color) -> color != 1 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack), CCItems.PACKING_CONTAINER.get());
 	}
 
 	@SubscribeEvent
 	public static void createSkullModels(EntityRenderersEvent.CreateSkullModels event) {
 		event.registerSkullModel(CCSkullTypes.DEEPER, new DeeperHeadModel(event.getEntityModelSet().bakeLayer(CCModelLayers.DEEPER_HEAD)));
+		event.registerSkullModel(CCSkullTypes.EVENDEEPER, new EvendeeperHeadModel(event.getEntityModelSet().bakeLayer(CCModelLayers.EVENDEEPER_HEAD)));
 		event.registerSkullModel(CCSkullTypes.MIME, new MimeHeadModel(event.getEntityModelSet().bakeLayer(CCModelLayers.MIME_HEAD)));
 		event.registerSkullModel(CCSkullTypes.PEEPER, new PeeperHeadModel(event.getEntityModelSet().bakeLayer(CCModelLayers.PEEPER_HEAD)));
 	}
@@ -111,6 +129,11 @@ public class CCClientCompat {
 	public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
 		event.registerAbove(new ResourceLocation("spyglass"), "monocle", new MonocleGuiOverlay());
 		event.registerAbove(CavernsAndChasms.location("monocle"), "monocle_head", new MonocleHeadGuiOverlay());
+	}
+
+	@SubscribeEvent
+	public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+		event.registerReloadListener(AegisRenderer.INSTANCE);
 	}
 
 	public static void registerRenderLayers() {
@@ -210,10 +233,15 @@ public class CCClientCompat {
 		ItemBlockRenderTypes.setRenderLayer(CCBlocks.FLOAT_GLASS.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(CCBlocks.FLOAT_GLASS_PANE.get(), RenderType.translucent());
 
+		ItemBlockRenderTypes.setRenderLayer(CCBlocks.FROSTED_GLASS.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(CCBlocks.FROSTED_GLASS_PANE.get(), RenderType.translucent());
+
 		ItemBlockRenderTypes.setRenderLayer(CCBlocks.ORNATE_GLASS.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(CCBlocks.ORNATE_GLASS_PANE.get(), RenderType.translucent());
 
 		ItemBlockRenderTypes.setRenderLayer(CCBlocks.SADDLED_EGG.get(), RenderType.cutout());
+
+		ItemBlockRenderTypes.setRenderLayer(CCBlocks.AMBIENT_BUBBLE_COLUMN.get(), RenderType.translucent());
 	}
 
 	public static void registerItemProperties() {
@@ -227,13 +255,21 @@ public class CCClientCompat {
 			ItemProperties.register(item, CavernsAndChasms.location("level"), (stack, level, entity, hash) -> GoldenBucketItem.getFluidLevel(stack));
 		}
 
-		for (Item item : List.of(CCItems.LOST_GOAT_HORN.get(), CCItems.COPPER_HORN.get())) {
+		for (Item item : List.of(CCItems.LOST_GOAT_HORN.get(), CCItems.COPPER_HORN.get(), CCItems.BONE_FLUTE.get())) {
 			ItemProperties.register(item, new ResourceLocation("tooting"), (stack, level, entity, hash) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
 		}
 
-		for (Item item : List.of(Items.BUNDLE, CCItems.FOIL.get(), CCItems.UNICORN_HORN.get())) {
+		for (Item item : List.of(Items.BUNDLE, CCItems.UNICORN_HORN.get(), CCItems.PACKING_CONTAINER.get())) {
 			ItemProperties.register(item, new ResourceLocation("dyed"), (stack, level, entity, hash) -> ((DyeableLeatherItem) stack.getItem()).getColor(stack) > 0 ? 1.0F : 0.0F);
 		}
+
+		ItemProperties.register(CCItems.PACKING_CONTAINER.get(), new ResourceLocation("filled"), (stack, p_174626_, p_174627_, p_174628_) -> {
+			return PackingContainerItem.getFullnessDisplay(stack);
+		});
+
+		ItemProperties.register(CCItems.AEGIS.get(), new ResourceLocation("blocking"), (stack, level, entity, hash) -> {
+			return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
+		});
 
 		ItemProperties.register(CCItems.TUNING_FORK.get(), CavernsAndChasms.location("holding"), (stack, level, entity, hash) -> stack.getOrCreateTag().contains("Note") ? 1.0F : 0.0F);
 		ItemProperties.register(CCItems.DEPTH_GAUGE.get(), CavernsAndChasms.location("depth"), new ClampedItemPropertyFunction() {

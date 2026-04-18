@@ -5,7 +5,6 @@ import com.teamabnormals.caverns_and_chasms.core.other.tags.CCBiomeTags;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBiomeModifierTypes.BlacklistedAddFeaturesBiomeModifier;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBiomeModifierTypes.BlacklistedAddSpawnsBiomeModifier;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCEntityTypes;
-import com.teamabnormals.caverns_and_chasms.core.registry.CCFeatures.CCPlacedFeatures;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -34,9 +33,11 @@ import java.util.stream.Stream;
 public class CCBiomeModifiers {
 
 	public static void bootstrap(BootstapContext<BiomeModifier> context) {
-		addSpawn(context, "peeper", CCBiomeTags.HAS_PEEPER, new MobSpawnSettings.SpawnerData(CCEntityTypes.PEEPER.get(), 40, 2, 4));
+		addSpawn(context, "peeper", CCBiomeTags.HAS_PEEPER, new MobSpawnSettings.SpawnerData(CCEntityTypes.PEEPER.get(), 20, 2, 4));
 		addSpawn(context, "mime", CCBiomeTags.HAS_MIME, new MobSpawnSettings.SpawnerData(CCEntityTypes.MIME.get(), 100, 1, 1));
-		addSpawn(context, "grazer", CCBiomeTags.HAS_GRAZER, new MobSpawnSettings.SpawnerData(CCEntityTypes.GRAZER.get(), 200, 1, 4));
+		addSpawn(context, "grazer", CCBiomeTags.HAS_GRAZER, new MobSpawnSettings.SpawnerData(CCEntityTypes.GRAZER.get(), 100, 1, 4));
+		addSpawn(context, "rat", CCBiomeTags.HAS_RAT, new MobSpawnSettings.SpawnerData(CCEntityTypes.RAT.get(), 10, 1, 2));
+		addSpawn(context, "cavefish", CCBiomeTags.HAS_CAVEFISH, new MobSpawnSettings.SpawnerData(CCEntityTypes.CAVEFISH.get(), 10, 6, 12));
 		addSpawn(context, "glare", CCBiomeTags.HAS_GLARE, new MobSpawnSettings.SpawnerData(CCEntityTypes.GLARE.get(), 20, 1, 1));
 		addSpawn(context, "lost_goat", CCBiomeTags.HAS_LOST_GOAT, new MobSpawnSettings.SpawnerData(CCEntityTypes.LOST_GOAT.get(), 1, 1, 1));
 
@@ -48,15 +49,16 @@ public class CCBiomeModifiers {
 		addFeature(context, "extra_silver_ore", CCBiomeTags.HAS_EXTRA_SILVER_ORE, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_SILVER_EXTRA);
 		addFeature(context, "soul_silver_ore", CCBiomeTags.HAS_SOUL_SILVER_ORE, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_SILVER_SOUL);
 
-		addFeature(context, "tin_ore", BiomeTags.IS_OVERWORLD, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_TIN, CCPlacedFeatures.ORE_TIN_BURIED);
+		addFeature(context, "tin_ore", BiomeTags.IS_OVERWORLD, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_TIN);
 
 		addFeature(context, "rocky_dirt", CCBiomeTags.HAS_ROCKY_DIRT, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_ROCKY_DIRT);
 		addFeature(context, "fragile_stone", CCBiomeTags.HAS_FRAGILE_STONE, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_FRAGILE_STONE, CCPlacedFeatures.ORE_FRAGILE_STONE_BURIED);
+		addFeature(context, "rhyolite", CCBiomeTags.HAS_ROCKY_DIRT, Decoration.UNDERGROUND_ORES, CCPlacedFeatures.ORE_RHYOLITE);
 
 		addFeature(context, "cave_growths", BiomeTags.IS_OVERWORLD, Decoration.VEGETAL_DECORATION, CCPlacedFeatures.PATCH_CAVE_GROWTHS, CCPlacedFeatures.PATCH_CAVE_GROWTHS_DEEP);
 		// addFeatureBlacklisted(context, "cave_growth_grove", Biomes.IS_CAVE, BiomeTags.IS_OVERWORLD, Decoration.VEGETAL_DECORATION, CCPlacedFeatures.CAVE_GROWTH_GROVE);
 
-		// addFeature(context, "false_hope", BiomeTags.IS_OVERWORLD, Decoration.VEGETAL_DECORATION, CCPlacedFeatures.FALSE_HOPE);
+		addFeature(context, "false_hope", BiomeTags.IS_OVERWORLD, Decoration.VEGETAL_DECORATION, CCPlacedFeatures.FALSE_HOPE);
 
 		removeFeature(context, "gold_ore", BiomeTags.IS_OVERWORLD, Decoration.UNDERGROUND_ORES, OrePlacements.ORE_GOLD, OrePlacements.ORE_GOLD_LOWER);
 		removeFeature(context, "dirt_ore", CCBiomeTags.HAS_ROCKY_DIRT, Decoration.UNDERGROUND_ORES, OrePlacements.ORE_DIRT);

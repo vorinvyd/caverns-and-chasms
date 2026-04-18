@@ -1,7 +1,7 @@
 package com.teamabnormals.caverns_and_chasms.common.network;
 
 import com.teamabnormals.blueprint.client.ClientInfo;
-import com.teamabnormals.caverns_and_chasms.common.entity.animal.Rat;
+import com.teamabnormals.caverns_and_chasms.common.entity.animal.rat.Rat;
 import com.teamabnormals.caverns_and_chasms.core.interfaces.RatHolder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -48,11 +48,12 @@ public final class S2CUpdateAttachedRatsMessage {
 				Level level = ClientInfo.getClientPlayerLevel();
 				Entity entity = level.getEntity(message.entityId);
 				if (entity instanceof LivingEntity livingentity) {
-					((RatHolder) entity).detachAllRats();
+					for (Rat rat : ((RatHolder) livingentity).getAttachedRats()) {
+						rat.setDetachedFromEntity();
+					}
 					for (int id : message.ratIds) {
-						Entity rat = level.getEntity(id);
-						if (rat instanceof Rat) {
-							((Rat) rat).attachToEntity(livingentity);
+						if (level.getEntity(id) instanceof Rat rat) {
+							rat.setAttachedToEntity(livingentity);
 						}
 					}
 				}

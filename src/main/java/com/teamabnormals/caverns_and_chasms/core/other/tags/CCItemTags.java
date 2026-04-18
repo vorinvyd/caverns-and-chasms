@@ -18,18 +18,20 @@ public class CCItemTags {
 	public static final TagKey<Item> AZALEA_LOGS = itemTag("azalea_logs");
 	public static final TagKey<Item> ADDITIONAL_TOOLBOX_TOOLS = itemTag("additional_toolbox_tools");
 	public static final TagKey<Item> DISMANTLING_FUELS = itemTag("dismantling_fuels");
+	public static final TagKey<Item> DISMANTLING_TABLE_CANNOT_DISMANTLE = itemTag("dismantling_table_cannot_dismantle");
 	public static final TagKey<Item> ATONING_FUELS = itemTag("atoning_fuels");
 	public static final TagKey<Item> UNREPAIRABLE_BY_ZIRCONIA = itemTag("unrepairable_by_zirconia");
 	public static final TagKey<Item> PLACEABLE_ITEMS = itemTag("placeable_items");
 	public static final TagKey<Item> CHANGES_HOOP_SIZE = itemTag("changes_hoop_size");
-
-	public static final TagKey<Item> FADED_TRIM_MODIFIERS = itemTag("faded_trim_modifiers");
-	public static final TagKey<Item> EMISSIVE_TRIM_MODIFIERS = itemTag("emissive_trim_modifiers");
+	public static final TagKey<Item> ROLLER_DOOR_LIFT_ITEMS = itemTag("roller_door_lift_items");
+	public static final TagKey<Item> TRIM_MODIFIERS = itemTag("trim_modifiers");
+	public static final TagKey<Item> SPARKLERS = itemTag("sparklers");
 
 	public static final TagKey<Item> GLARE_FOOD = itemTag("glare_food");
 	public static final TagKey<Item> RAT_FOOD = itemTag("rat_food");
 	public static final TagKey<Item> RAT_TAME_ITEMS = itemTag("rat_tame_items");
 
+	public static final TagKey<Item> COPPER_INGOTS = itemTag("copper_ingots");
 	public static final TagKey<Item> COPPER_HELMETS = itemTag("copper_helmets");
 	public static final TagKey<Item> COPPER_CHESTPLATES = itemTag("copper_chestplates");
 	public static final TagKey<Item> COPPER_LEGGINGS = itemTag("copper_leggings");
@@ -39,6 +41,8 @@ public class CCItemTags {
 	public static final TagKey<Item> COPPER_SHOVELS = itemTag("copper_shovels");
 	public static final TagKey<Item> COPPER_AXES = itemTag("copper_axes");
 	public static final TagKey<Item> COPPER_HOES = itemTag("copper_hoes");
+
+	public static final TagKey<Item> WAX = TagUtil.itemTag("forge", "wax");
 
 	public static final TagKey<Item> GEMS_SPINEL = TagUtil.itemTag("forge", "gems/spinel");
 	public static final TagKey<Item> GEMS_TURQUOISE = TagUtil.itemTag("forge", "gems/turquoise");

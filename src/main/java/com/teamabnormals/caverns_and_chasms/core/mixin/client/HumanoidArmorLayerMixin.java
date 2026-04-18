@@ -8,6 +8,7 @@ import com.teamabnormals.caverns_and_chasms.client.CCRenderTypes;
 import com.teamabnormals.caverns_and_chasms.common.entity.monster.Mime;
 import com.teamabnormals.caverns_and_chasms.common.item.CCArmorTrim;
 import com.teamabnormals.caverns_and_chasms.common.item.TetherPotionItem;
+import com.teamabnormals.caverns_and_chasms.common.item.TrimModifierSmithingTemplateItem;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.other.CCTiers.CCArmorMaterials;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCItems;
@@ -16,6 +17,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
@@ -34,6 +36,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraftforge.common.Tags;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,6 +45,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.function.Function;
 
 @Mixin(HumanoidArmorLayer.class)
 public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends RenderLayer<T, M> {
@@ -103,6 +108,9 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 	public A renderArmorPieceForCowl(HumanoidArmorLayer layer, EquipmentSlot slot, Operation<A> original, PoseStack poseStack, MultiBufferSource source, int p_117098_, T entity) {
 		ItemStack stack = entity.getItemBySlot(EquipmentSlot.HEAD);
 		if (stack.is(CCItems.COWL.get())) {
+			if (entity.getItemBySlot(EquipmentSlot.CHEST).is(Tags.Items.ARMORS_CHESTPLATES)) {
+				return this.outerModel;
+			}
 			return this.innerModel;
 		}
 		return original.call(layer, slot);
@@ -115,7 +123,19 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 			model.body.visible = true;
 			model.rightArm.visible = true;
 			model.leftArm.visible = true;
+			if (entity.getItemBySlot(EquipmentSlot.CHEST).is(Tags.Items.ARMORS_CHESTPLATES)) {
+				setScale(model.head, 0.95F);
+			} else {
+				setScale(model.head, 1.02F);
+			}
 		}
+	}
+
+	@Unique
+	private static void setScale(ModelPart part, float scale) {
+		part.xScale = scale;
+		part.yScale = scale;
+		part.zScale = scale;
 	}
 
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasFoil()Z", shift = At.Shift.BEFORE), method = "renderArmorPiece")
@@ -131,6 +151,7 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 					ArmorTrim trim = new ArmorTrim(armorTrim.material(), access.registryOrThrow(Registries.TRIM_PATTERN).getHolderOrThrow(copper ? CCTrimPatterns.COPPER : CCTrimPatterns.SANGUINE));
 					((CCArmorTrim) trim).setFaded(((CCArmorTrim) armorTrim).isFaded());
 					((CCArmorTrim) trim).setEmissive(((CCArmorTrim) armorTrim).isEmissive());
+					((CCArmorTrim) trim).setPulse(((CCArmorTrim) armorTrim).isPulse());
 					this.renderTrim(armorItem.getMaterial(), poseStack, source, num, trim, this.getArmorModelHook(entity, stack, slot, model), this.usesInnerModel(slot));
 				});
 			}
@@ -140,14 +161,14 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends 
 	@Inject(at = @At("HEAD"), method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V", cancellable = true, remap = false)
 	public void renderTrim(ArmorMaterial material, PoseStack stack, MultiBufferSource source, int i, ArmorTrim trim, Model model, boolean inner, CallbackInfo ci) {
 		CCArmorTrim armorTrim = (CCArmorTrim) trim;
-		if (armorTrim.isEmissive() || armorTrim.isFaded()) {
-			boolean emissive = armorTrim.isEmissive();
+		boolean faded = armorTrim.isFaded();
+		boolean emissive = armorTrim.isEmissive();
+		boolean pulse = armorTrim.isPulse();
+		if (faded || emissive || pulse) {
 			TextureAtlasSprite sprite = this.armorTrimAtlas.getSprite(inner ? trim.innerTexture(material) : trim.outerTexture(material));
-			VertexConsumer vertexconsumer = sprite.wrap(source.getBuffer(
-					emissive ? CCRenderTypes.ARMOR_CUTOUT_NO_CULL_EMISSIVE.apply(Sheets.ARMOR_TRIMS_SHEET) :
-							CCRenderTypes.ARMOR_TRANSLUCENT_NO_CULL.apply(Sheets.ARMOR_TRIMS_SHEET)
-			));
-			model.renderToBuffer(stack, vertexconsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.5F);
+			Function<ResourceLocation, RenderType> type = emissive ? CCRenderTypes.ARMOR_CUTOUT_NO_CULL_EMISSIVE : CCRenderTypes.ARMOR_TRANSLUCENT_NO_CULL;
+			VertexConsumer vertexconsumer = sprite.wrap(source.getBuffer(type.apply(Sheets.ARMOR_TRIMS_SHEET)));
+			model.renderToBuffer(stack, vertexconsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, TrimModifierSmithingTemplateItem.getTrimAlpha(faded, emissive, pulse));
 			ci.cancel();
 		}
 	}

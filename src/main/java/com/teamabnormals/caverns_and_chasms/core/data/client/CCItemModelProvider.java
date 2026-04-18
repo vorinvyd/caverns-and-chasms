@@ -8,6 +8,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,17 +28,19 @@ public class CCItemModelProvider extends BlueprintItemModelProvider {
 		this.animatedItem(DEPTH_GAUGE, 48);
 		this.animatedItem(BAROMETER, 21);
 		this.generatedItem(
-				ABNORMALS_BANNER_PATTERN, MUSIC_DISC_EPILOGUE, MUSIC_DISC_COPY,
+				ABNORMALS_BANNER_PATTERN, MUSIC_DISC_ANALOGUE, MUSIC_DISC_EPILOGUE, MUSIC_DISC_COPY,
 				COPPER_NUGGET, OXIDIZED_COPPER_GOLEM,
 				EXPOSED_COPPER_INGOT, WEATHERED_COPPER_INGOT, OXIDIZED_COPPER_INGOT,
 				RAW_SILVER, LARGE_ARROW,
 				SILVER_INGOT, SILVER_NUGGET, SILVER_HORSE_ARMOR,
-				RAW_TIN, TIN_INGOT, TIN_NUGGET,
+				RAW_TIN, TIN_INGOT, TIN_NUGGET, TINPLATE, RICOCHET_ARROW,
 				NECROMIUM_INGOT, NECROMIUM_NUGGET, NECROMIUM_HORSE_ARMOR,
 				NETHERITE_NUGGET, NETHERITE_HORSE_ARMOR,
 				BEJEWELED_APPLE, BLUNT_ARROW, SPINEL, TMT_MINECART, ZIRCONIA,
 				TURQUOISE, UNICORN_HORN,
+				CAVEFISH, CAVEFISH_BUCKET,
 				COWL,
+				TRIM_MODIFIER_SMITHING_TEMPLATE,
 				LIVING_FLESH, EXILE_ARMOR_TRIM_SMITHING_TEMPLATE, FORGER_ARMOR_TRIM_SMITHING_TEMPLATE, IMMOLATE_ARMOR_TRIM_SMITHING_TEMPLATE, RIM_ARMOR_TRIM_SMITHING_TEMPLATE, PLATE_ARMOR_TRIM_SMITHING_TEMPLATE, CORE_ARMOR_TRIM_SMITHING_TEMPLATE,
 				BOOM_POTTERY_SHERD, CAST_POTTERY_SHERD, RIDE_POTTERY_SHERD, STALKER_POTTERY_SHERD,
 				AZALEA_BOAT.getFirst(), AZALEA_BOAT.getSecond(), AZALEA_FURNACE_BOAT, LARGE_AZALEA_BOAT,
@@ -45,6 +48,9 @@ public class CCItemModelProvider extends BlueprintItemModelProvider {
 				COPPER_HORSE_ARMOR, EXPOSED_COPPER_HORSE_ARMOR, WEATHERED_COPPER_HORSE_ARMOR, OXIDIZED_COPPER_HORSE_ARMOR,
 				WAXED_COPPER_HORSE_ARMOR, WAXED_EXPOSED_COPPER_HORSE_ARMOR, WAXED_WEATHERED_COPPER_HORSE_ARMOR, WAXED_OXIDIZED_COPPER_HORSE_ARMOR
 		);
+
+		this.overlayItem(TOOLBELT, "generated");
+		this.packingContainerItem(PACKING_CONTAINER, "generated");
 
 		this.withExistingParent(name(WAXED_COPPER_INGOT.get()), "item/generated").texture("layer0", new ResourceLocation("item/copper_ingot"));
 
@@ -63,7 +69,7 @@ public class CCItemModelProvider extends BlueprintItemModelProvider {
 
 		this.item(WAXED_OXIDIZED_COPPER_GOLEM, "oxidized_copper_golem", "generated");
 		this.handheldItem(KUNAI);
-		this.spawnEggItem(PEEPER_SPAWN_EGG, COPPER_GOLEM_SPAWN_EGG, DEEPER_SPAWN_EGG, MIME_SPAWN_EGG, GLARE_SPAWN_EGG, RAT_SPAWN_EGG, GRAZER_SPAWN_EGG, SADDLED_GRAZER_SPAWN_EGG);
+		this.spawnEggItem(PEEPER_SPAWN_EGG, COPPER_GOLEM_SPAWN_EGG, DEEPER_SPAWN_EGG, EVENDEEPER_SPAWN_EGG, MIME_SPAWN_EGG, GLARE_SPAWN_EGG, RAT_SPAWN_EGG, CAVEFISH_SPAWN_EGG, GRAZER_SPAWN_EGG, SADDLED_GRAZER_SPAWN_EGG);
 
 		this.trimmableCopperArmorItem(true, COPPER_HELMET, COPPER_CHESTPLATE, COPPER_LEGGINGS, COPPER_BOOTS);
 		this.trimmableCopperArmorItem(EXPOSED_COPPER_HELMET, EXPOSED_COPPER_CHESTPLATE, EXPOSED_COPPER_LEGGINGS, EXPOSED_COPPER_BOOTS);
@@ -81,6 +87,30 @@ public class CCItemModelProvider extends BlueprintItemModelProvider {
 
 	public ItemModelBuilder item(RegistryObject<? extends ItemLike> item, String type) {
 		return this.withExistingParent(name(item.get()), "item/" + type).texture("layer0", itemTexture(item.get()).toString().replace("waxed_", ""));
+	}
+
+	public ItemModelBuilder overlayItem(RegistryObject<? extends ItemLike> item, String type) {
+		return this.withExistingParent(name(item.get()), "item/" + type)
+				.texture("layer0", itemTexture(item.get()))
+				.texture("layer1", itemTexture(item.get()).withSuffix("_overlay"));
+	}
+
+	public ItemModelBuilder packingContainerItem(RegistryObject<? extends ItemLike> item, String type) {
+		ModelFile dyed = this.withExistingParent(name(item.get()) + "_dyed", "item/" + type)
+				.texture("layer0", itemTexture(item.get()))
+				.texture("layer1", itemTexture(item.get()).withSuffix("_overlay"));
+
+		ModelFile filled = this.withExistingParent(name(item.get()) + "_filled", "item/" + type)
+				.texture("layer0", itemTexture(item.get()).withSuffix("_filled"));
+
+		ModelFile dyedFilled = this.withExistingParent(name(item.get()) + "_dyed_filled", "item/" + type)
+				.texture("layer0", itemTexture(item.get()).withSuffix("_filled"))
+				.texture("layer1", itemTexture(item.get()).withSuffix("_overlay"));
+
+		return this.withExistingParent(name(item.get()), "item/" + type).texture("layer0", itemTexture(item.get()))
+				.override().model(filled).predicate(new ResourceLocation("dyed"), 0).predicate(new ResourceLocation("filled"), 0.0000001F).end()
+				.override().model(dyed).predicate(new ResourceLocation("dyed"), 1).end()
+				.override().model(dyedFilled).predicate(new ResourceLocation("dyed"), 1).predicate(new ResourceLocation("filled"), 0.0000001F).end();
 	}
 
 	@SafeVarargs

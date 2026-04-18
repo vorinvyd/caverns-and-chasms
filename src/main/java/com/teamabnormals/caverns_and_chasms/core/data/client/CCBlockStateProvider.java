@@ -1,9 +1,11 @@
 package com.teamabnormals.caverns_and_chasms.core.data.client;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamabnormals.blueprint.core.data.client.BlueprintBlockStateProvider;
 import com.teamabnormals.blueprint.core.data.client.BlueprintItemModelProvider;
 import com.teamabnormals.caverns_and_chasms.common.block.*;
 import com.teamabnormals.caverns_and_chasms.common.block.RefractorBlock.RefractorState;
+import com.teamabnormals.caverns_and_chasms.common.block.holdable.*;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -15,7 +17,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
@@ -23,6 +28,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.teamabnormals.caverns_and_chasms.core.other.CCBlockFamilies.*;
@@ -46,10 +52,15 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.block(RAW_TIN_BLOCK);
 		this.block(TIN_ORE);
 		this.block(DEEPSLATE_TIN_ORE);
+		this.block(CYLINDRITE_TIN_ORE);
 		this.block(CASSITERITE_TIN_ORE);
 		this.block(TIN_BLOCK);
+		this.tinChainBlock(TIN_CHAIN);
+		this.tinBulbBlock(TIN_BULB);
 		this.block(FLOAT_GLASS);
 		this.glassPaneBlock(FLOAT_GLASS_PANE, FLOAT_GLASS);
+		this.block(FROSTED_GLASS);
+		this.glassPaneBlock(FROSTED_GLASS_PANE, FROSTED_GLASS);
 
 		this.holdPlateBlock(HOLD_PLATE, TIN_BLOCK);
 		this.holdButtonBlock(TIN_BLOCK, HOLD_BUTTON);
@@ -59,6 +70,7 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.hoopBlock(HOOP);
 		this.storageDuctBlock(STORAGE_DUCT);
 		this.storageDuctHatchBlock(STORAGE_DUCT_HATCH);
+		this.logBlock(TINPLATE_BLOCK);
 
 		this.rollerDoorBlocks(ROLLER_DOOR, ROLLER_DOOR_HEADER);
 
@@ -113,6 +125,26 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 
 		this.block(NECROMIUM_BLOCK);
 		this.block(ROTTEN_FLESH_BLOCK);
+		this.block(GUNPOWDER_BLOCK);
+
+		this.sparklerBlock(SPARKLER);
+		this.sparklerBlock(WHITE_SPARKLER);
+		this.sparklerBlock(ORANGE_SPARKLER);
+		this.sparklerBlock(MAGENTA_SPARKLER);
+		this.sparklerBlock(LIGHT_BLUE_SPARKLER);
+		this.sparklerBlock(YELLOW_SPARKLER);
+		this.sparklerBlock(LIME_SPARKLER);
+		this.sparklerBlock(PINK_SPARKLER);
+		this.sparklerBlock(GRAY_SPARKLER);
+		this.sparklerBlock(LIGHT_GRAY_SPARKLER);
+		this.sparklerBlock(CYAN_SPARKLER);
+		this.sparklerBlock(PURPLE_SPARKLER);
+		this.sparklerBlock(BLUE_SPARKLER);
+		this.sparklerBlock(BROWN_SPARKLER);
+		this.sparklerBlock(GREEN_SPARKLER);
+		this.sparklerBlock(RED_SPARKLER);
+		this.sparklerBlock(BLACK_SPARKLER);
+
 		this.randomRotationBlock(ROCKY_DIRT);
 		this.flintBlock(FLINT_BLOCK);
 		this.coalBlock(COAL);
@@ -147,20 +179,34 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.blockFamily(COBBLED_DEEPSLATE_TILES_FAMILY);
 
 		this.wallBlock(Blocks.STONE, STONE_WALL.get());
+
 		this.wallBlock(Blocks.POLISHED_GRANITE, POLISHED_GRANITE_WALL.get());
+		this.block(CHISELED_POLISHED_GRANITE);
+		this.logBlock(GRANITE_PILLAR);
+		this.blockFamily(GRANITE_BRICKS_FAMILY);
+		this.blockFamily(GRANITE_TILES_FAMILY);
+
 		this.wallBlock(Blocks.POLISHED_DIORITE, POLISHED_DIORITE_WALL.get());
+		this.block(CHISELED_POLISHED_DIORITE);
+		this.logBlock(DIORITE_PILLAR);
+		this.blockFamily(DIORITE_BRICKS_FAMILY);
+		this.blockFamily(DIORITE_TILES_FAMILY);
+
 		this.wallBlock(Blocks.POLISHED_ANDESITE, POLISHED_ANDESITE_WALL.get());
+		this.block(CHISELED_POLISHED_ANDESITE);
+		this.logBlock(ANDESITE_PILLAR);
+		this.blockFamily(ANDESITE_BRICKS_FAMILY);
+		this.blockFamily(ANDESITE_TILES_FAMILY);
 
 		this.baseBlockVariants(Blocks.CALCITE, CALCITE_STAIRS, CALCITE_SLAB, CALCITE_WALL);
 		this.cubeColumnBlock(CHISELED_CALCITE_BRICKS);
 		this.blockFamily(POLISHED_CALCITE_FAMILY);
 		this.blockFamily(CALCITE_BRICKS_FAMILY);
-		this.blockFamily(SMOOTH_CALCITE_FAMILY);
 		this.logBlock(CALCITE_PILLAR);
-		this.chiseledCalciteBlock(CHISELED_CALCITE);
+		this.chiseledCalciteBlock(CHISELED_POLISHED_CALCITE);
 
 		this.baseBlockVariants(Blocks.TUFF, TUFF_STAIRS, TUFF_SLAB, TUFF_WALL);
-		this.cubeColumnBlock(CHISELED_TUFF);
+		this.cubeColumnBlock(CHISELED_POLISHED_TUFF);
 		this.cubeColumnBlock(CHISELED_TUFF_BRICKS);
 		this.blockFamily(TUFF_BRICKS_FAMILY);
 		this.blockFamily(SMOOTH_TUFF_FAMILY);
@@ -168,6 +214,14 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 
 		this.blockFamily(SUGILITE_FAMILY);
 		this.blockFamily(POLISHED_SUGILITE_FAMILY);
+		this.blockFamilyWithChiseled(SUGILITE_BRICKS_FAMILY);
+		this.logBlock(SUGILITE_PILLAR);
+
+		this.logBlock(CYLINDRITE);
+		this.blockFamily(SMOOTH_CYLINDRITE_FAMILY);
+		this.blockFamilyWithChiseled(CYLINDRITE_BRICKS_FAMILY);
+		this.blockFamily(POLISHED_CYLINDRITE_FAMILY);
+		this.logBlock(CYLINDRITE_PILLAR);
 
 		this.blockFamily(CASSITERITE_FAMILY);
 		this.blockFamily(SMOOTH_CASSITERITE_FAMILY);
@@ -312,7 +366,7 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.woodworksBlocks(AZALEA_PLANKS, AZALEA_BOARDS, AZALEA_LADDER, AZALEA_BOOKSHELF, AZALEA_BEEHIVE, AZALEA_CHEST, TRAPPED_AZALEA_CHEST);
 		this.chiseledBookshelfBlock(CHISELED_AZALEA_BOOKSHELF, ALTERNATE_BOOKSHELF_POSITIONS);
 
-		this.crossBlockWithPot(FALSE_HOPE, POTTED_FALSE_HOPE);
+		this.falseHopeBlock(FALSE_HOPE, POTTED_FALSE_HOPE);
 
 		this.crossBlockWithPot(MOSCHATEL, POTTED_MOSCHATEL);
 		this.caveGrowthsBlock(CAVE_GROWTHS, POTTED_CAVE_GROWTHS);
@@ -336,6 +390,28 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.vanillaSlabBlock(Blocks.POLISHED_DIORITE, Blocks.POLISHED_DIORITE_SLAB);
 		this.vanillaSlabBlock(Blocks.POLISHED_GRANITE, Blocks.POLISHED_GRANITE_SLAB);
 		this.vanillaSlabBlock(Blocks.PRISMARINE_BRICKS, Blocks.PRISMARINE_BRICK_SLAB);
+	}
+
+	public void sparklerBlock(Pair<RegistryObject<SparklerBlock>, RegistryObject<WallSparklerBlock>> pair) {
+		RegistryObject<SparklerBlock> sparkler = pair.getFirst();
+		RegistryObject<WallSparklerBlock> wallSparkler = pair.getSecond();
+
+		ModelFile standing = this.models().withExistingParent(name(sparkler.get()), CavernsAndChasms.location("block/template_sparkler")).texture("sparkler", blockTexture(sparkler.get()));
+		ModelFile standingLit = this.models().withExistingParent(name(sparkler.get()) + "_lit", CavernsAndChasms.location("block/template_sparkler")).texture("sparkler", blockTexture(sparkler.get()).withSuffix("_lit"));
+
+		this.getVariantBuilder(sparkler.get()).partialState().with(SparklerBlock.LIT, false).modelForState().modelFile(standing).addModel().partialState().with(SparklerBlock.LIT, true).modelForState().modelFile(standingLit).addModel();
+		this.generatedItem(sparkler.get(), "block");
+
+		ModelFile wall = this.models().withExistingParent(name(wallSparkler.get()), CavernsAndChasms.location("block/template_sparkler_wall")).texture("sparkler", blockTexture(sparkler.get()));
+		ModelFile wallLit = this.models().withExistingParent(name(wallSparkler.get()) + "_lit", CavernsAndChasms.location("block/template_sparkler_wall")).texture("sparkler", blockTexture(sparkler.get()).withSuffix("_lit"));
+
+		this.horizontalBlock(wallSparkler.get(), state -> state.getValue(WallSparklerBlock.LIT) ? wallLit : wall, 90);
+	}
+
+	public void falseHopeBlock(RegistryObject<Block> plant, RegistryObject<Block> flowerPot) {
+		this.directionalBlock(plant.get(), this.models().cross(name(plant.get()), this.blockTexture(plant.get())));
+		this.generatedItem(plant.get(), "block");
+		this.simpleBlock(flowerPot.get(), this.models().singleTexture(name(flowerPot.get()), new ResourceLocation("block/flower_pot_cross"), "plant", this.blockTexture(plant.get())));
 	}
 
 	public void caveGrowthsBlock(RegistryObject<Block> caveGrowths, RegistryObject<Block> flowerPot) {
@@ -581,6 +657,29 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 				}, BlockStateProperties.WATERLOGGED);
 
 		this.generatedItem(block, "item");
+	}
+
+	public void tinChainBlock(RegistryObject<Block> chainBlock) {
+		Block block = chainBlock.get();
+		ModelFile chain = models().withExistingParent(name(block), CavernsAndChasms.MOD_ID + ":block/template_tin_chain").texture("all", blockTexture(block)).renderType("cutout");
+		this.getVariantBuilder(block).forAllStatesExcept(state -> {
+			Axis axis = state.getValue(BlockStateProperties.AXIS);
+			return ConfiguredModel.builder().modelFile(chain).rotationX(axis.isHorizontal() ? 90 : 0).rotationY(axis == Axis.X ? 90 : 0).build();
+		}, BlockStateProperties.WATERLOGGED);
+		this.generatedItem(block, "item");
+	}
+
+	public void tinBulbBlock(RegistryObject<Block> bulbBlock) {
+		Block block = bulbBlock.get();
+		this.getVariantBuilder(block)
+				.forAllStates(state -> {
+					int power = state.getValue(TinBulbBlock.POWER);
+					boolean powered = state.getValue(TinBulbBlock.POWERED);
+					String suffix = (powered ? "_powered" : "") + ("_power_" + power);
+					return ConfiguredModel.builder().modelFile(this.models().cubeAll(name(block) + suffix, blockTexture(block).withSuffix(suffix))).build();
+				});
+
+		this.simpleBlockItem(block, this.existingModel(blockModel(block).withSuffix("_power_0")));
 	}
 
 	public void copperLanternBlocks(Block lantern, Block waxedLantern, Block chain, Block waxedChain) {
@@ -841,12 +940,9 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 
 	public void caviarBlock(RegistryObject<Block> registryObject) {
 		Block block = registryObject.get();
-		ResourceLocation texture = suffix(blockTexture(block), "_");
 		this.simpleBlock(registryObject.get(), this.models()
 				.withExistingParent(name(block), CavernsAndChasms.MOD_ID + ":block/template_caviar")
-				.texture("side", suffix(texture, "side"))
-				.texture("top", suffix(texture, "top"))
-				.texture("bottom", suffix(texture, "bottom"))
+				.texture("caviar", blockTexture(block))
 		);
 		this.generatedItem(block, "item");
 	}
@@ -910,7 +1006,12 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 
 	public void saddledEggBlock(RegistryObject<Block> registryObject) {
 		Block block = registryObject.get();
-		this.horizontalBlock(block, new ModelFile.UncheckedModelFile(CavernsAndChasms.location("block/saddled_egg")));
+		this.getVariantBuilder(block)
+				.forAllStatesExcept(state -> ConfiguredModel.builder()
+						.modelFile(new UncheckedModelFile(CavernsAndChasms.location("block/saddled_egg")))
+						.rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) % 360)
+						.build(), BlockStateProperties.WATERLOGGED
+				);
 		this.generatedItem(block, "item");
 	}
 
@@ -958,9 +1059,16 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 		this.blockItem(block);
 	}
 
+	public static final RegistryObject<Block>[] DOUBLE_SLABS = new RegistryObject[]{
+			POLISHED_CALCITE_SLAB, POLISHED_TUFF_SLAB, SMOOTH_TUFF_SLAB,
+			POLISHED_SUGILITE_SLAB, POLISHED_DRIPSTONE_SLAB,
+			POLISHED_CYLINDRITE_SLAB, POLISHED_CASSITERITE_SLAB,
+			POLISHED_RHYOLITE_SLAB, POLISHED_MAGMATIC_RHYOLITE_SLAB
+	};
+
 	@Override
 	public void slabBlock(Block block, Block slab) {
-		if (slab instanceof SlabBlock slabBlock && (slabBlock == POLISHED_CALCITE_SLAB.get() || slabBlock == POLISHED_TUFF_SLAB.get() || slabBlock == SMOOTH_TUFF_SLAB.get() || slabBlock == POLISHED_SUGILITE_SLAB.get() || slabBlock == POLISHED_CASSITERITE_SLAB.get() || slabBlock == POLISHED_DRIPSTONE_SLAB.get() || slabBlock == POLISHED_RHYOLITE_SLAB.get() || slabBlock == POLISHED_MAGMATIC_RHYOLITE_SLAB.get())) {
+		if (slab instanceof SlabBlock slabBlock && Arrays.stream(DOUBLE_SLABS).map(RegistryObject::get).toList().contains(slabBlock)) {
 			ResourceLocation side = blockTexture(slab);
 			ResourceLocation full = blockTexture(block);
 			this.slabBlock(slabBlock, models().slab(name(slab), side, full, full), models().slabTop(name(slab) + "_top", side, full, full), models().cubeColumn(name(slab) + "_double", side, full));
@@ -1017,9 +1125,8 @@ public class CCBlockStateProvider extends BlueprintBlockStateProvider {
 				default -> "_four";
 			};
 
-			int heat = state.getValue(CoalBlock.HEAT);
-			boolean isHot = heat != 0;
-			boolean hasFlame = heat == 2;
+			boolean hasFlame = state.getValue(CoalBlock.LIT);
+			boolean isHot = hasFlame || state.getValue(CoalBlock.WARM);
 			String lit = isHot ? "_lit" : "";
 			String flame = hasFlame ? "_flame" : "";
 			String name = name(block) + count;

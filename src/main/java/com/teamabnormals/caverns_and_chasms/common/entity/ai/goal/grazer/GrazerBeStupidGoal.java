@@ -17,23 +17,24 @@ public class GrazerBeStupidGoal extends Goal {
 
 	@Override
 	public boolean canUse() {
-		return this.grazer.getState() == GrazerState.DEFAULT && this.grazer.getNavigation().isDone() && this.grazer.getRandom().nextInt(500) == 0;
+		return !this.grazer.hasControllingPassenger() && this.grazer.getState() == GrazerState.DEFAULT && this.grazer.getNavigation().isDone() && this.grazer.getRandom().nextInt(500) == 0;
 	}
 
 	@Override
 	public boolean canContinueToUse() {
-		return this.grazer.getState() == GrazerState.DEFAULT && this.timer > 0;
+		return !this.grazer.hasControllingPassenger() && this.grazer.getState() == GrazerState.BEING_STUPID && this.timer > 0;
 	}
 
 	@Override
 	public void start() {
-		this.grazer.level().broadcastEntityEvent(this.grazer, (byte) 4);
+		this.grazer.setState(GrazerState.BEING_STUPID);
 		this.timer = this.adjustedTickDelay(200 + this.grazer.getRandom().nextInt(100));
 	}
 
 	@Override
 	public void stop() {
-		this.grazer.level().broadcastEntityEvent(this.grazer, (byte) 5);
+		if (this.grazer.getState() == GrazerState.BEING_STUPID)
+			this.grazer.setState(GrazerState.DEFAULT);
 	}
 
 	@Override

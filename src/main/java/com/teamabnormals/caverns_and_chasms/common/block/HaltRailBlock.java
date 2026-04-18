@@ -1,8 +1,9 @@
 package com.teamabnormals.caverns_and_chasms.common.block;
 
+import com.teamabnormals.caverns_and_chasms.core.registry.CCSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
-import net.minecraft.world.phys.Vec3;
 
 public class HaltRailBlock extends BaseRailBlock {
 	public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
@@ -29,24 +29,6 @@ public class HaltRailBlock extends BaseRailBlock {
 	}
 
 	@Override
-	public void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart) {
-		super.onMinecartPass(state, level, pos, cart);
-		boolean top = state.getValue(TOP_POWERED);
-		boolean bottom = state.getValue(BOTTOM_POWERED);
-
-		Direction direction = switch (state.getValue(SHAPE)) {
-			case EAST_WEST, ASCENDING_WEST, ASCENDING_EAST -> Direction.WEST;
-			default -> Direction.SOUTH;
-		};
-
-		Direction motion = cart.getMotionDirection();
-
-		if (top && motion.equals(direction) || bottom && motion.equals(direction.getOpposite())) {
-			cart.setDeltaMovement(Vec3.ZERO);
-		}
-	}
-
-	@Override
 	protected void updateState(BlockState state, Level level, BlockPos pos, Block block) {
 		boolean top = state.getValue(TOP_POWERED);
 		boolean bottom = state.getValue(BOTTOM_POWERED);
@@ -60,9 +42,14 @@ public class HaltRailBlock extends BaseRailBlock {
 		boolean bottomSignal = level.getSignal(pos.relative(direction.getOpposite()), direction.getOpposite()) > 0;
 
 		if (top != topSignal || bottom != bottomSignal) {
-
-			if (top != topSignal) level.setBlock(pos, state.setValue(TOP_POWERED, topSignal), 3);
-			if (bottom != bottomSignal) level.setBlock(pos, state.setValue(BOTTOM_POWERED, bottomSignal), 3);
+			if (top != topSignal) {
+				level.setBlock(pos, state.setValue(TOP_POWERED, topSignal), 3);
+				level.playSound(null, pos, topSignal ? CCSoundEvents.HALT_RAIL_EXTEND.get() : CCSoundEvents.HALT_RAIL_CONTRACT.get(), SoundSource.BLOCKS);
+			}
+			if (bottom != bottomSignal) {
+				level.setBlock(pos, state.setValue(BOTTOM_POWERED, bottomSignal), 3);
+				level.playSound(null, pos, bottomSignal ? CCSoundEvents.HALT_RAIL_EXTEND.get() : CCSoundEvents.HALT_RAIL_CONTRACT.get(), SoundSource.BLOCKS);
+			}
 
 			level.updateNeighborsAt(pos.below(), this);
 			if (state.getValue(getShapeProperty()).isAscending()) {

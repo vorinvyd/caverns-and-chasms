@@ -7,7 +7,7 @@
       "item": "caverns_and_chasms:copper_brick_stairs"
     },
     {
-      "item": "minecraft:honeycomb"
+      "tag": "forge:wax"
     }
   ],
   "result": {

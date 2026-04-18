@@ -49,7 +49,7 @@ public class GrazerModel extends AgeableListModel<AbstractGrazer> {
 		PartDefinition root = meshdefinition.getRoot();
 
 		PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(12, 84).addBox(-5.0F, -13.0F, -19.0F, 10.0F, 9.0F, 12.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
-		PartDefinition jaw = head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(15, 105).addBox(-5.0F, 0.0F, -9.0F, 10.0F, 3.0F, 9.0F), PartPose.offset(0.0F, -4.0F, -7.0F));
+		PartDefinition jaw = head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(15, 105).addBox(-5.0F, 0.0F, -9.0F, 10.0F, 3.0F, 9.0F, new CubeDeformation(-0.005F)), PartPose.offset(0.0F, -4.005F, -7.0F));
 		jaw.addOrReplaceChild("drool", CubeListBuilder.create().texOffs(33, 116).addBox(0.0F, 0.0F, -0.5F, 0.0F, 9.0F, 1.0F), PartPose.offset(5.0F, 3.0F, -8.5F));
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, -25.0F, -19.0F, 10.0F, 12.0F, 24.0F)
 				.texOffs(0, 36).addBox(-5.0F, -25.0F, -19.0F, 10.0F, 24.0F, 24.0F, new CubeDeformation(0.5F))
@@ -69,20 +69,23 @@ public class GrazerModel extends AgeableListModel<AbstractGrazer> {
 		float partialtick = ageInTicks - (float) grazer.tickCount;
 
 		if (grazer.isBaby()) {
+			float wiggleamount = grazer.getBabyWiggleLegsAmount(partialtick);
+
 			this.body.xRot = 0.0F;
 			this.jaw.xRot = 0.0F;
-			this.rightWing.yRot = -0.6F - Mth.cos(ageInTicks) * 0.6F;
-			this.leftWing.yRot = 0.6F + Mth.cos(ageInTicks) * 0.6F;
-			this.rightHindLeg.xRot = Mth.cos(ageInTicks * 0.7F) * 0.5F;
-			this.leftHindLeg.xRot = Mth.cos(ageInTicks * 0.7F + Mth.PI) * 0.5F;
-			this.rightFrontLeg.xRot = Mth.cos(ageInTicks * 0.7F + Mth.PI) * 0.5F;
-			this.leftFrontLeg.xRot = Mth.cos(ageInTicks * 0.7F) * 0.5F;
+			this.rightWing.yRot = -0.3F - Mth.cos(ageInTicks * 0.2F) * 0.3F;
+			this.leftWing.yRot = 0.3F + Mth.cos(ageInTicks * 0.2F) * 0.3F;
+			this.rightHindLeg.xRot = Mth.cos(ageInTicks * 0.5F) * -0.2F * wiggleamount;
+			this.leftHindLeg.xRot = Mth.cos(ageInTicks * 0.5F + 0.2F) * -0.2F * wiggleamount;
+			this.rightFrontLeg.xRot = Mth.cos(ageInTicks * 0.5F - 0.2F) * 0.2F * wiggleamount;
+			this.leftFrontLeg.xRot = Mth.cos(ageInTicks * 0.5F + 0.1F) * 0.2F * wiggleamount;
 		} else {
 			float runamount = grazer.getRunAmount(partialtick);
 			float bounceamount = grazer.getBounceAmount(partialtick);
 			float wiggleamount = grazer.getWiggleAmount(partialtick);
 			float onbackamount = grazer.getOnBackAmount(partialtick);
 			float bestupidamount = grazer.getBeStupidAmount(partialtick);
+			float vocalizeamount = grazer.getVocalizeAmount(partialtick);
 			float walkamount = 1.0F - Math.max(bounceamount, wiggleamount);
 			float idleanimamount = 1.0F - Math.max(Math.max(runamount, bounceamount), wiggleamount);
 
@@ -109,6 +112,9 @@ public class GrazerModel extends AgeableListModel<AbstractGrazer> {
 			float f = -bestupidamount * bestupidamount + 2.0F * bestupidamount;
 			this.body.xRot += -0.2F * f;
 			this.jaw.xRot += 0.6F * f;
+
+			// Open mouth when vocalizing
+			this.jaw.xRot += (0.35F + Mth.cos(ageInTicks) * 0.03F) * Mth.sin(vocalizeamount);
 
 			// Running animation
 			this.body.xRot += (-0.15F - Mth.cos(limbSwing) * 0.15F) * limbSwingAmount * runamount;

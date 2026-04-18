@@ -3,8 +3,8 @@ package com.teamabnormals.caverns_and_chasms.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.teamabnormals.caverns_and_chasms.common.block.WinchBlock;
-import com.teamabnormals.caverns_and_chasms.common.block.entity.WinchBlockEntity;
+import com.teamabnormals.caverns_and_chasms.common.block.entity.holdable.WinchBlockEntity;
+import com.teamabnormals.caverns_and_chasms.common.block.holdable.WinchBlock;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.other.CCModelLayers;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBlocks;
@@ -66,16 +66,18 @@ public class WinchRenderer<T extends WinchBlockEntity> implements BlockEntityRen
 
 			poseStack.mulPose(Axis.YP.rotationDegrees(face == AttachFace.WALL ? facing.toYRot() : facing.getOpposite().toYRot()));
 			if (face != AttachFace.WALL) {
-				poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-				poseStack.translate(0.0D, -1.0D, face == AttachFace.CEILING ? 1.75D : 1.0D);
+				poseStack.mulPose(Axis.XP.rotationDegrees(face == AttachFace.CEILING ? 90.0F : -90.0F));
+				poseStack.translate(0.0D, -1.0D, face == AttachFace.CEILING ? -1.0D : 1.0D);
 			}
 
-			this.crank.zRot = Mth.HALF_PI + winch.getRotation(partialTick) * Mth.DEG_TO_RAD;
+			this.crank.zRot = Mth.HALF_PI + winch.getVisualRotation(partialTick) * Mth.DEG_TO_RAD;
 
 			VertexConsumer vertexConsumer = WINCH_MATERIAL.buffer(buffer, RenderType::entitySolid);
 			this.base.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 			this.crank.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 			this.base.render(poseStack, GLOW_MATERIAL.buffer(buffer, RenderType::entityTranslucentCull), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, winch.getPower() / 15F);
+
+			// System.out.println("G: " + winch.time + ", P: " + partialTick + ", R0: " + winch.getRotation(0) + ", R1: " + winch.getRotation(1) + ", R: " + winch.getRotation(partialTick));
 
 			poseStack.popPose();
 		}

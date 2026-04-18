@@ -46,7 +46,7 @@ public class CowlItem extends DyeableArmorItem {
 		Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 		builder.putAll(super.getAttributeModifiers(slot, stack));
 		UUID uuid = ArmorItem.ARMOR_MODIFIER_UUID_PER_TYPE.get(this.type);
-		double amount = 0.4D + 0.1D * stack.getEnchantmentLevel(CCEnchantments.THIEVING.get());
+		double amount = 0.4D + 0.1D * stack.getEnchantmentLevel(CCEnchantments.CONCEAL.get());
 		builder.put(CCAttributes.STEALTH.get(), new AttributeModifier(uuid, "Stealth", amount, Operation.ADDITION));
 		return slot == this.getEquipmentSlot() ? builder.build() : super.getAttributeModifiers(slot, stack);
 	}
@@ -65,16 +65,20 @@ public class CowlItem extends DyeableArmorItem {
 		}
 	}
 
+	public static boolean shouldBeInvisible(LivingEntity entity) {
+		ItemStack headStack = entity.getItemBySlot(EquipmentSlot.HEAD);
+		return entity.isCrouching() && headStack.is(CCItems.COWL.get()) && headStack.getEnchantmentLevel(CCEnchantments.OBSCURITY.get()) > 0;
+	}
+
 	@SubscribeEvent
 	public static void onLivingUpdate(LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 		IDataManager dataManager = ((IDataManager) entity);
 		Level level = entity.level();
 		if (!level.isClientSide()) {
-			ItemStack headStack = entity.getItemBySlot(EquipmentSlot.HEAD);
 			boolean isInvisible = dataManager.getValue(CCDataProcessors.OBSCURITY_INVISIBILITY);
-			boolean shouldBeInvisible = entity.isCrouching() && headStack.is(CCItems.COWL.get()) && headStack.getEnchantmentLevel(CCEnchantments.OBSCURITY.get()) > 0;
-			if (isInvisible != shouldBeInvisible) {
+			boolean shouldBeInvisible = shouldBeInvisible(entity);
+			if (isInvisible != shouldBeInvisible(entity)) {
 				dataManager.setValue(CCDataProcessors.OBSCURITY_INVISIBILITY, shouldBeInvisible);
 				poofParticles(level, entity.getBoundingBox(), 6);
 			}
@@ -107,7 +111,7 @@ public class CowlItem extends DyeableArmorItem {
 			}
 		}
 
-		if (entity.getItemBySlot(EquipmentSlot.HEAD).getEnchantmentLevel(CCEnchantments.OBSCURITY.get()) > 0) {
+		if (entity.isCrouching() && entity.getItemBySlot(EquipmentSlot.HEAD).getEnchantmentLevel(CCEnchantments.OBSCURITY.get()) > 0) {
 			stealth = 0.0D;
 		}
 

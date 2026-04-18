@@ -1,17 +1,21 @@
 package com.teamabnormals.caverns_and_chasms.integration.jei;
 
+import com.teamabnormals.caverns_and_chasms.common.recipe.SmithingModifierRecipe;
 import com.teamabnormals.caverns_and_chasms.core.CavernsAndChasms;
 import com.teamabnormals.caverns_and_chasms.core.other.CCTiers.CCArmorMaterials;
 import com.teamabnormals.caverns_and_chasms.core.other.CCTiers.CCItemTiers;
+import com.teamabnormals.caverns_and_chasms.core.other.tags.CCItemTags;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBlocks;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCItems;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.recipe.category.extensions.vanilla.smithing.IExtendableSmithingRecipeCategory;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -36,6 +40,12 @@ public class CCPlugin implements IModPlugin {
 	}
 
 	@Override
+	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+		IExtendableSmithingRecipeCategory smithingCategory = registration.getSmithingCategory();
+		smithingCategory.addExtension(SmithingModifierRecipe.class, new SmithingModifierCategoryExtension<>());
+	}
+
+	@Override
 	public void registerItemSubtypes(ISubtypeRegistration registration) {
 		registration.registerSubtypeInterpreter(CCItems.COPPER_HORN.get(), InstrumentSubtypeInterpreter.INSTANCE);
 		registration.registerSubtypeInterpreter(CCItems.TETHER_POTION.get(), PotionSubtypeInterpreter.INSTANCE);
@@ -47,18 +57,17 @@ public class CCPlugin implements IModPlugin {
 	public void registerRecipes(IRecipeRegistration registration) {
 		registration.addRecipes(RecipeTypes.ANVIL, getRepairRecipes(registration).toList());
 		registration.addRecipes(RecipeTypes.CRAFTING, SubtleTippedArrowRecipe.createRecipes(registration));
-		registration.addRecipes(RecipeTypes.CRAFTING, ToolboxWaxingRecipeMaker.createRecipes());
-		registration.addRecipes(RecipeTypes.CRAFTING, FadedSmithingTemplateDupingRecipeMaker.createRecipes());
+		registration.addRecipes(RecipeTypes.CRAFTING, NBTWaxingRecipeMaker.createRecipes());
 		registration.addRecipes(RecipeTypes.CRAFTING, MusicDiscCopyRecipe.createRecipes());
 	}
 
 	private static Stream<RepairData> getRepairData(IRecipeRegistration registration) {
 		Stream<ItemStack> items = registration.getIngredientManager().getAllItemStacks().stream().filter(IForgeItemStack::isRepairable);
-		RepairData zirconia = new RepairData(Ingredient.of(CCItems.ZIRCONIA.get()), items.collect(Collectors.toList()));
-
 		return Stream.of(
-				zirconia,
+				new RepairData(Ingredient.of(CCItems.ZIRCONIA.get()), items.collect(Collectors.toList())),
+				new RepairData(Ingredient.of(CCItemTags.INGOTS_TIN), new ItemStack(CCItems.AEGIS.get())),
 				new RepairData(CCArmorMaterials.COWL.getRepairIngredient(), new ItemStack(CCItems.COWL.get())),
+				new RepairData(CCArmorMaterials.TOOLBELT.getRepairIngredient(), new ItemStack(CCItems.TOOLBELT.get())),
 				new RepairData(CCArmorMaterials.SANGUINE.getRepairIngredient(),
 						new ItemStack(CCItems.SANGUINE_HELMET.get()),
 						new ItemStack(CCItems.SANGUINE_CHESTPLATE.get()),

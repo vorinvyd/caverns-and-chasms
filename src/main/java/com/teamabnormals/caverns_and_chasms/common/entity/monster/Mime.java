@@ -71,7 +71,7 @@ public class Mime extends Monster {
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
 	}
 
-	public static AttributeSupplier.Builder registerAttributes() {
+	public static AttributeSupplier.Builder createAttributes() {
 		return Monster.createMonsterAttributes()
 				.add(Attributes.MAX_HEALTH, 30.0F)
 				.add(Attributes.FOLLOW_RANGE, 35.0D)
@@ -84,8 +84,8 @@ public class Mime extends Monster {
 		return pos.getY() <= 48 && (random.nextInt(10) == 0 || pos.getY() <= 0) && checkUndergroundMonsterSpawnRules(type, level, reason, pos, random);
 	}
 
-	public static boolean checkUndergroundMonsterSpawnRules(EntityType<? extends Mob> monster, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource p_219018_) {
-		return level.getDifficulty() != Difficulty.PEACEFUL && isDarkEnoughToSpawnNoSkylight(level, pos, p_219018_) && checkMobSpawnRules(monster, level, reason, pos, p_219018_);
+	public static boolean checkUndergroundMonsterSpawnRules(EntityType<? extends Mob> monster, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+		return level.getDifficulty() != Difficulty.PEACEFUL && isDarkEnoughToSpawnNoSkylight(level, pos, random) && checkMobSpawnRules(monster, level, reason, pos, random);
 	}
 
 	public static boolean isDarkEnoughToSpawnNoSkylight(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
@@ -167,7 +167,7 @@ public class Mime extends Monster {
 				for (Ingredient ingredient : recipe.getIngredients()) {
 					if (stack.getCount() == 1 && ingredient.test(stack)) {
 						attacker.setItemSlot(EquipmentSlot.OFFHAND, recipe.getResultItem(this.level().registryAccess()).copy());
-						source.playSound(CCSoundEvents.MIME_MIME.get(), 1.0F, 1.0F);
+						this.level().playSound(null, this, CCSoundEvents.MIME_CONVERT.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
 						return;
 					}
 				}

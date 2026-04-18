@@ -59,6 +59,7 @@ public class FlintBlock extends BlueprintFallingBlock {
 	@Override
 	public void onLand(Level level, BlockPos pos, BlockState state, BlockState newState, FallingBlockEntity fallingBlockEntity) {
 		spark(level, pos, false);
+		level.playSound(null, pos, CCSoundEvents.FLINT_BLOCK_LAND.get(), SoundSource.BLOCKS, 0.3F, level.random.nextFloat() * 0.1F + 0.9F);
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class FlintBlock extends BlueprintFallingBlock {
 					double d4 = direction.y * 0.4D + level.random.nextGaussian() * 0.05D;
 					double d5 = direction.z * 0.4D + level.random.nextGaussian() * 0.05D;
 
-					NetworkUtil.spawnParticle(CCParticleTypes.SPARK.getId().toString(), d0, d1, d2, d3, d4, d5);
+					NetworkUtil.spawnParticle(CCParticleTypes.TIN_SPARK.getId().toString(), d0, d1, d2, d3, d4, d5);
 				}
 				for (int m = 0; m < (!grazing ? 25 : 10); ++m) {
 					double d0 = pos.getX() + level.random.nextDouble() * 0.8D;
@@ -144,13 +145,17 @@ public class FlintBlock extends BlueprintFallingBlock {
 
 	@Override
 	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-		if (level.random.nextFloat() < 0.4) {
+		if (random.nextFloat() < 0.4) {
 			BlockPos blockpos = pos.below();
 			if (isFree(level.getBlockState(blockpos))) {
 				double d0 = pos.getX() + random.nextDouble();
 				double d1 = pos.getY() + 0.7;
 				double d2 = pos.getZ() + random.nextDouble();
 				level.addParticle(CCParticleTypes.FLINT.get(), d0, d1, d2, 0.0, 0.0, 0.0);
+
+				if (random.nextInt(50) == 0) {
+					level.playLocalSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, CCSoundEvents.FLINT_BLOCK_RATTLE.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
+				}
 			}
 		}
 	}

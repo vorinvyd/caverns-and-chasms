@@ -15,7 +15,7 @@ public class GrazerRunGoal extends Goal {
 	private final AbstractGrazer grazer;
 	private final double range;
 	private final TargetingConditions avoidEntityTargeting;
-	private int runStillTime;
+	private int runTime;
 
 	private int cooldown;
 
@@ -30,25 +30,25 @@ public class GrazerRunGoal extends Goal {
 	public boolean canUse() {
 		if (this.grazer.getState() == GrazerState.RUNNING_STILL || this.grazer.getState() == GrazerState.RUNNING) {
 			return true;
-		} else if (this.grazer.getState() != GrazerState.DEFAULT) {
+		} else if (!this.grazer.isIdleState(this.grazer.getState())) {
 			return false;
 		} else if (this.cooldown-- > 0) {
 			return false;
 		}
 
 		LivingEntity attacker = this.grazer.getLastHurtByMob();
-		if (attacker == null && !(this.grazer instanceof SaddledGrazer))
+		if (attacker == null && !(this.grazer instanceof SaddledGrazer)) {
 			attacker = findNearestScaryEntity();
-
-		if (attacker != null || this.grazer.isFreezing() || this.grazer.isOnFire()) {
-			if (attacker != null && !(this.grazer instanceof SaddledGrazer))
-				this.grazer.setTarget(attacker);
-			this.grazer.setState(GrazerState.RUNNING_STILL);
-			this.runStillTime = 10;
-			return true;
 		}
 
-		return false;
+		if (attacker != null) {
+			if (!(this.grazer instanceof SaddledGrazer)) {
+				this.grazer.setTarget(attacker);
+			}
+			return true;
+		} else {
+			return this.grazer.isFreezing() || this.grazer.isOnFire();
+		}
 	}
 
 	private LivingEntity findNearestScaryEntity() {
@@ -57,27 +57,27 @@ public class GrazerRunGoal extends Goal {
 
 	@Override
 	public boolean canContinueToUse() {
-		return this.grazer.getState() == GrazerState.RUNNING_STILL || this.grazer.getState() == GrazerState.RUNNING;
+		return (this.grazer.getState() == GrazerState.RUNNING_STILL || this.grazer.getState() == GrazerState.RUNNING) && this.runTime < this.adjustedTickDelay(160);
 	}
 
 	@Override
 	public void start() {
+		this.grazer.setState(GrazerState.RUNNING_STILL);
+		this.runTime = 0;
 		this.grazer.getNavigation().stop();
 	}
 
 	@Override
 	public void stop() {
 		if (this.grazer.getState() == GrazerState.RUNNING) {
-			this.grazer.setState(GrazerState.DEFAULT);
+			this.grazer.setState(GrazerState.SLOWING_DOWN);
 			this.grazer.setTarget(null);
 		}
 	}
 
 	@Override
 	public void tick() {
-		if (this.runStillTime > 0) {
-			this.runStillTime--;
-		} else if (this.grazer.getState() == GrazerState.RUNNING_STILL) {
+		if (this.runTime++ > 10 && this.grazer.getState() == GrazerState.RUNNING_STILL) {
 			this.grazer.setState(GrazerState.RUNNING);
 			this.grazer.playSound(CCSoundEvents.GRAZER_CHARGE.get(), 1.0F, 1.0F);
 		}

@@ -17,11 +17,26 @@ public class CCBlockTags {
 	public static final TagKey<Block> AZALEA_LOGS = blockTag("azalea_logs");
 	public static final TagKey<Block> CAVE_GROWTHS = blockTag("cave_growths");
 	public static final TagKey<Block> COPPER_RAILS = blockTag("copper_rails");
+	public static final TagKey<Block> FLOODLIGHTS = blockTag("floodlights");
 	public static final TagKey<Block> DEFLECTS_PROJECTILES = blockTag("deflects_projectiles");
 	public static final TagKey<Block> WEAKER_DEFLECT_VELOCITY = blockTag("weaker_deflect_velocity");
+	public static final TagKey<Block> WEAKEST_DEFLECT_VELOCITY = blockTag("weakest_deflect_velocity");
 	public static final TagKey<Block> MAINTAINS_DEFLECT_VELOCITY = blockTag("maintains_deflect_velocity");
+	public static final TagKey<Block> HAS_BONUS_DEFLECT = blockTag("has_bonus_deflect");
 	public static final TagKey<Block> STATIC_NOTE_BLOCKS = blockTag("static_note_blocks");
+	public static final TagKey<Block> ALARM_NOTE_BLOCKS = blockTag("alarm_note_blocks");
+	public static final TagKey<Block> WARDEN_NOTE_BLOCKS = blockTag("warden_note_blocks");
 	public static final TagKey<Block> COPPER_GOLEM_SUMMON_BLOCKS = blockTag("copper_golem_summon_blocks");
+	public static final TagKey<Block> WINCH_DOES_NOT_UNWIND_ON = blockTag("winch_does_not_unwind_on");
+	public static final TagKey<Block> WINCH_FORCES_UNWIND_ON = blockTag("winch_forces_unwind_on");
+	public static final TagKey<Block> WINCH_WINDS_FASTER_ON = blockTag("winch_winds_faster_on");
+	public static final TagKey<Block> WINCH_WINDS_SLOWER_ON = blockTag("winch_winds_slower_on");
+	public static final TagKey<Block> HOLDS_FASTER_ON = blockTag("holds_faster_on");
+	public static final TagKey<Block> HOLDS_SLOWER_ON = blockTag("holds_slower_on");
+	public static final TagKey<Block> SPARKLERS = blockTag("sparklers");
+	public static final TagKey<Block> STANDING_SPARKLERS = blockTag("standing_sparklers");
+	public static final TagKey<Block> WALL_SPARKLERS = blockTag("wall_sparklers");
+	public static final TagKey<Block> RAT_FOOD_BLOCKS = blockTag("rat_food_blocks");
 
 	public static final TagKey<Block> MOB_INTERACTABLE_DOORS = TagUtil.blockTag("forge", "mob_interactable_doors");
 	public static final TagKey<Block> WAXABLE_COPPER_BLOCKS = TagUtil.blockTag("forge", "waxable_copper_blocks");

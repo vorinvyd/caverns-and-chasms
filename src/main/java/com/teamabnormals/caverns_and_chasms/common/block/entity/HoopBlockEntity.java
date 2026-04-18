@@ -2,12 +2,14 @@ package com.teamabnormals.caverns_and_chasms.common.block.entity;
 
 import com.teamabnormals.blueprint.common.world.storage.tracking.IDataManager;
 import com.teamabnormals.caverns_and_chasms.common.block.HoopBlock;
+import com.teamabnormals.caverns_and_chasms.core.other.CCCriteriaTriggers;
 import com.teamabnormals.caverns_and_chasms.core.other.CCDataProcessors;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCBlockEntityTypes;
 import com.teamabnormals.caverns_and_chasms.core.registry.CCSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -77,8 +79,16 @@ public class HoopBlockEntity extends BlockEntity {
 			if (power > 0) {
 				level.setBlock(pos, state.setValue(HoopBlock.OUTPUT_POWER, power), 3);
 				level.scheduleTick(pos, state.getBlock(), 8);
-				level.playSound(null, pos, CCSoundEvents.HOOP_SCORE.get(), SoundSource.BLOCKS, 0.18F, 0.45F);
+				level.playSound(null, pos, CCSoundEvents.HOOP_SCORE.get(), SoundSource.BLOCKS, 2.0F, 0.8F + power / 15.0F * 0.6F);
 				level.gameEvent(GameEvent.BLOCK_ACTIVATE, pos, GameEvent.Context.of(state));
+
+				for (Entity entity : entities) {
+					if (entity instanceof Projectile projectile && projectile.getOwner() instanceof ServerPlayer serverPlayer) {
+						CCCriteriaTriggers.HOOP_ENTERED.trigger(serverPlayer, entity, size, power);
+					} else if (entity instanceof ItemEntity itemEntity && itemEntity.getOwner() instanceof ServerPlayer serverPlayer) {
+						CCCriteriaTriggers.HOOP_ENTERED.trigger(serverPlayer, entity, size, power);
+					}
+				}
 
 				for (Direction direction : Direction.values()) {
 					if (direction.getAxis() != axis) {
